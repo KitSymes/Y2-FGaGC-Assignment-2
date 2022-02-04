@@ -26,6 +26,11 @@
 #include "VertexTypes.h"
 */
 #include "GameObject.h"
+#include "Debug.h"
+#include "Vector3.h"
+
+#define NUMBER_OF_CUBES 2
+#define FPS_60 1.0f/60.0f
 
 using namespace DirectX;
 
