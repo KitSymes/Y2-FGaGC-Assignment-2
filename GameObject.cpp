@@ -1,41 +1,40 @@
 #include "GameObject.h"
 
-GameObject::GameObject(string type, Geometry geometry, Material material) : _geometry(geometry), _type(type), _material(material)
+GameObject::GameObject(string type, Geometry geometry, Material material) : _type(type)
 {
 	_parent = nullptr;
-	_position = Vector3();
-	_rotation = Vector3();
-	_scale = Vector3(1.0f, 1.0f, 1.0f);
-
-	_textureRV = nullptr;
+	_transform = new Transform();
+	_appearance = new Appearance(geometry, material);
 }
 
 GameObject::~GameObject()
 {
+	if (_transform)
+		delete _transform;
+	_transform = nullptr;
+
+	if (_appearance)
+		delete _appearance;
+	_appearance = nullptr;
 }
 
 void GameObject::Update(float t)
 {
-	// Calculate world matrix
-	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotation = XMMatrixRotationX(_rotation.x) * XMMatrixRotationY(_rotation.y) * XMMatrixRotationZ(_rotation.z);
-	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
-
-	XMStoreFloat4x4(&_world, scale * rotation * translation);
+	_transform->Update(t);
 
 	if (_parent != nullptr)
 	{
-		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
+		XMStoreFloat4x4(&_transform->GetWorld(), _transform->GetWorldMatrix() * _parent->_transform->GetWorldMatrix());
 	}
 }
 
-void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
+void GameObject::Draw(ID3D11DeviceContext* pImmediateContext)
 {
 	// NOTE: We are assuming that the constant buffers and all other draw setup has already taken place
-
+	Geometry temp = _appearance->GetGeometryData();
 	// Set vertex and index buffers
-	pImmediateContext->IASetVertexBuffers(0, 1, &_geometry.vertexBuffer, &_geometry.vertexBufferStride, &_geometry.vertexBufferOffset);
-	pImmediateContext->IASetIndexBuffer(_geometry.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	pImmediateContext->IASetVertexBuffers(0, 1, &temp.vertexBuffer, &temp.vertexBufferStride, &temp.vertexBufferOffset);
+	pImmediateContext->IASetIndexBuffer(_appearance->GetGeometryData().indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-	pImmediateContext->DrawIndexed(_geometry.numberOfIndices, 0, 0);
+	pImmediateContext->DrawIndexed(_appearance->GetGeometryData().numberOfIndices, 0, 0);
 }
