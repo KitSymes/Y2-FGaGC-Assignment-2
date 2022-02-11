@@ -7,7 +7,4 @@ Appearance::Appearance(Geometry geometry, Material material) : _geometry(geometr
 
 Appearance::~Appearance()
 {
-	if (_textureRV)
-		delete _textureRV;
-	_textureRV = nullptr;
 }
