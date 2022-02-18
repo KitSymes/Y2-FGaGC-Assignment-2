@@ -171,6 +171,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
+		gameObject->AddComponent(new Rigidbody());
 
 		_gameObjects.push_back(gameObject);
 	}
@@ -179,6 +180,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 	_gameObjects.push_back(gameObject);
+
+	/*for (int i = 0; i < _gameObjects.size(); i++)
+	{
+		Debug::GetInstance().Write(_gameObjects[i]->GetType().c_str());
+		if (_gameObjects[i]->GetComponent<Rigidbody>() == nullptr)
+			Debug::GetInstance().WriteLine(" does not have a rigidbody!");
+		else
+			Debug::GetInstance().WriteLine(" has a rigidbody!");
+	}*/
 
 	return S_OK;
 }
@@ -734,7 +744,7 @@ void Application::Update()
 		if (gameObject->GetType().find("Cube") != std::string::npos)
 		{
 			//Debug::GetInstance().Write(deltaTime);
-			Debug::GetInstance().WriteLine("");
+			//Debug::GetInstance().WriteLine("");
 		}
 		gameObject->Update(deltaTime);
 	}

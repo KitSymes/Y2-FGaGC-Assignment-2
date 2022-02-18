@@ -16,11 +16,18 @@ GameObject::~GameObject()
 	if (_appearance)
 		delete _appearance;
 	_appearance = nullptr;
+
+	for (int i = 0; i < components.size(); i++)
+		delete components[i];
+	components.clear();
 }
 
 void GameObject::Update(float t)
 {
 	_transform->Update(t);
+
+	for (int i = 0; i < components.size(); i++)
+		components[i]->Update(t);
 
 	if (_parent != nullptr)
 	{
@@ -37,4 +44,10 @@ void GameObject::Draw(ID3D11DeviceContext* pImmediateContext)
 	pImmediateContext->IASetIndexBuffer(_appearance->GetGeometryData().indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	pImmediateContext->DrawIndexed(_appearance->GetGeometryData().numberOfIndices, 0, 0);
+}
+
+void GameObject::AddComponent(Component* component)
+{
+	components.push_back(component);
+	component->SetParent(this);
 }

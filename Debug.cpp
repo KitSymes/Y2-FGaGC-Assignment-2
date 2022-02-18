@@ -11,6 +11,11 @@ void Debug::Write(char* str)
 	OutputDebugStringA(str);
 }
 
+void Debug::Write(const char* str)
+{
+	OutputDebugStringA(str);
+}
+
 void Debug::Write(int num)
 {
 	char str[1024] = { 0 };
@@ -33,6 +38,12 @@ void Debug::Write(long num)
 }
 
 void Debug::WriteLine(char* str)
+{
+	OutputDebugStringA(str);
+	OutputDebugStringA("\n");
+}
+
+void Debug::WriteLine(const char* str)
 {
 	OutputDebugStringA(str);
 	OutputDebugStringA("\n");

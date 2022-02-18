@@ -24,6 +24,8 @@
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Appearance.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="Rigidbody.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -36,6 +38,8 @@
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Appearance.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
