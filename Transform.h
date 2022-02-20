@@ -6,6 +6,7 @@
 #include <d3d11_1.h>
 
 #include "Vector3.h"
+#include "Quaternion.h"
 
 using namespace DirectX;
 
@@ -24,9 +25,13 @@ public:
 	void SetScale(float x, float y, float z) { _scale.x = x; _scale.y = y; _scale.z = z; }
 	Vector3 GetScale() const { return _scale; }
 
-	void SetRotation(Vector3 rotation) { _rotation = rotation; }
-	void SetRotation(float x, float y, float z) { _rotation.x = x; _rotation.y = y; _rotation.z = z; }
-	Vector3 GetRotation() const { return _rotation; }
+	void SetRotation(Vector3 rotation)
+	{
+		_rotation = Quaternion(); 
+		_rotation.addScaledVector(rotation, 1.0f);
+	}
+	void SetRotation(float x, float y, float z) { SetRotation(Vector3(x, y, z)); }
+	Quaternion GetRotation() const { return _rotation; }
 
 	XMFLOAT4X4 GetWorld() const { return _world; }
 	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
@@ -34,7 +39,7 @@ public:
 	void Update(float t);
 private:
 	Vector3 _position;
-	Vector3 _rotation;
+	Quaternion _rotation;
 	Vector3 _scale;
 
 	XMFLOAT4X4 _world;

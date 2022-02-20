@@ -26,6 +26,7 @@
     <ClInclude Include="Appearance.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />

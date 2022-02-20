@@ -171,10 +171,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
-		gameObject->AddComponent(new Rigidbody());
+		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
 
 		_gameObjects.push_back(gameObject);
 	}
+
 	gameObject = new GameObject("donut", herculesGeometry, shinyMaterial);
 	gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
 	gameObject->GetTransform()->SetPosition(-4.0f, 0.5f, 10.0f);
@@ -691,6 +692,7 @@ void Application::moveBackward(int objectNumber)
 	_gameObjects[objectNumber - 2]->GetTransform()->SetPosition(position);
 }
 
+float rot = 0.0f;
 void Application::Update()
 {
 	// Update our time
@@ -725,6 +727,29 @@ void Application::Update()
 	{
 		moveBackward(4);
 	}
+
+	Vector3 input = Vector3();
+	if (GetAsyncKeyState('W'))
+	{
+		input.z += 1.0f;
+	}
+	if (GetAsyncKeyState('S'))
+	{
+		input.z -= 1.0f;
+	}
+	if (GetAsyncKeyState('A'))
+	{
+		input.x -= 1.0f;
+	}
+	if (GetAsyncKeyState('D'))
+	{
+		input.x += 1.0f;
+	}
+	input.Normalise();
+	_gameObjects[1]->GetComponent<Rigidbody>()->thrust = input * 1.0f;
+	rot += deltaTime;
+	rot = fmod(rot, 360);
+	_gameObjects[2]->GetTransform()->SetRotation(rot, 0.0f, 0.0f);
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 

@@ -9,7 +9,7 @@ class GameObject;
 
 class Component
 {
-private:
+protected:
 	GameObject* _gameObject;
 
 public:
