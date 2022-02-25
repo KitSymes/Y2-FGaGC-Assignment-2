@@ -747,9 +747,9 @@ void Application::Update()
 	}
 	input.Normalise();
 	_gameObjects[1]->GetComponent<Rigidbody>()->thrust = input * 1.0f;
-	rot += deltaTime;
+	rot += deltaTime*10;
 	rot = fmod(rot, 360);
-	_gameObjects[2]->GetTransform()->SetRotation(rot, 0.0f, 0.0f);
+	_gameObjects[1]->GetTransform()->SetRotation(XMConvertToRadians(rot), 0.0f, 0.0f);
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 

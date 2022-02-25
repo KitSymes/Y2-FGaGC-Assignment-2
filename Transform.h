@@ -25,12 +25,31 @@ public:
 	void SetScale(float x, float y, float z) { _scale.x = x; _scale.y = y; _scale.z = z; }
 	Vector3 GetScale() const { return _scale; }
 
-	void SetRotation(Vector3 rotation)
+	void SetRotation(Vector3 rotation) { SetRotation(rotation.x, rotation.y, rotation.z); }
+	void SetRotation(float x, float y, float z)
 	{
-		_rotation = Quaternion(); 
-		_rotation.addScaledVector(rotation, 1.0f);
+		XMVECTOR vectorQ = XMQuaternionRotationMatrix(XMMatrixRotationX(x) * XMMatrixRotationY(y) * XMMatrixRotationZ(z));
+		SetRotation(vectorQ);
 	}
-	void SetRotation(float x, float y, float z) { SetRotation(Vector3(x, y, z)); }
+	void SetRotationD(Vector3 rotation) { SetRotationD(rotation.x, rotation.y, rotation.z); }
+	void SetRotationD(float x, float y, float z)
+	{
+		XMVECTOR vectorQ = XMQuaternionRotationMatrix(
+			XMMatrixRotationX(XMConvertToRadians(x)) *
+			XMMatrixRotationY(XMConvertToRadians(y)) *
+			XMMatrixRotationZ(XMConvertToRadians(z)));
+		SetRotation(vectorQ);
+	}
+	void SetRotation(XMVECTOR vector)
+	{
+		XMFLOAT4 float4Q;
+		XMStoreFloat4(&float4Q, vector);
+		_rotation.r = float4Q.w;
+		_rotation.i = float4Q.x;
+		_rotation.j = float4Q.y;
+		_rotation.k = float4Q.z;
+		_rotation.normalise();
+	}
 	Quaternion GetRotation() const { return _rotation; }
 
 	XMFLOAT4X4 GetWorld() const { return _world; }
