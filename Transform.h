@@ -25,14 +25,15 @@ public:
 	void SetScale(float x, float y, float z) { _scale.x = x; _scale.y = y; _scale.z = z; }
 	Vector3 GetScale() const { return _scale; }
 
+	void SetRotation(Quaternion rotation) { _rotation = rotation; };
 	void SetRotation(Vector3 rotation) { SetRotation(rotation.x, rotation.y, rotation.z); }
 	void SetRotation(float x, float y, float z)
 	{
 		XMVECTOR vectorQ = XMQuaternionRotationMatrix(XMMatrixRotationX(x) * XMMatrixRotationY(y) * XMMatrixRotationZ(z));
 		SetRotation(vectorQ);
 	}
-	void SetRotationD(Vector3 rotation) { SetRotationD(rotation.x, rotation.y, rotation.z); }
-	void SetRotationD(float x, float y, float z)
+	void SetRotationDegrees(Vector3 rotation) { SetRotationDegrees(rotation.x, rotation.y, rotation.z); }
+	void SetRotationDegrees(float x, float y, float z)
 	{
 		XMVECTOR vectorQ = XMQuaternionRotationMatrix(
 			XMMatrixRotationX(XMConvertToRadians(x)) *

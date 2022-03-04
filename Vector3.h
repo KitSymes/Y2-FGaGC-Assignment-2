@@ -1,7 +1,8 @@
 #pragma once
-
 #ifndef _VECTOR3_H
 #define _VECTOR3_H
+
+#include <DirectXMath.h>
 
 class Vector3
 {
@@ -29,5 +30,7 @@ public:
 
 	bool IsNormalised();
 	void Normalise();
+
+	DirectX::XMFLOAT3 ToXMFLOAT3();
 };
 #endif

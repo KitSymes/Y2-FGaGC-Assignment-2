@@ -18,9 +18,15 @@ private:
     float _mass;
     Vector3 _netForce;
 
+    XMFLOAT3 _torque;
+    XMFLOAT3X3 _inertiaTensor;
+    XMFLOAT3 _angularAcceleration;
+    Vector3 _angularVelocity;
+
     Vector3 _brake;
 
     const float _dragCoeficient = 0.5f;
+    const float _angularDamping = 0.99f;
     bool _laminar = true;
 public:
     Rigidbody(bool useConstAccel, Vector3 initialVelocity, Vector3 initialAcceleration);
@@ -28,6 +34,9 @@ public:
     void SetUsingConstantAcceleration(bool value);
     void SetAcceleration(Vector3 value);
     void SetVelocity(Vector3 value);
+    void SetTorque(Vector3 force, Vector3 relativeLocation);
+    void SetInertiaTensor(float dx, float dy, float dz);
+    void CalculateAngularAcceleration();
 
     void Update(float t);
     void UpdateNetForce();

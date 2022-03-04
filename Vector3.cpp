@@ -114,3 +114,8 @@ void Vector3::Normalise()
 	y /= magnitude;
 	z /= magnitude;
 }
+
+DirectX::XMFLOAT3 Vector3::ToXMFLOAT3()
+{
+	return DirectX::XMFLOAT3(x, y, z);
+}

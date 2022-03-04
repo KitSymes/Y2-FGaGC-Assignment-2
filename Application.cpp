@@ -169,7 +169,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		std::string name = "Cube " + to_string(i);
 		gameObject = new GameObject(name, cubeGeometry, shinyMaterial);
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 10.0f);
+		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
 
@@ -692,7 +692,7 @@ void Application::moveBackward(int objectNumber)
 	_gameObjects[objectNumber - 2]->GetTransform()->SetPosition(position);
 }
 
-float rot = 0.0f;
+bool doIt = true;
 void Application::Update()
 {
 	// Update our time
@@ -704,7 +704,7 @@ void Application::Update()
 	if (dwTimeStart == 0)
 		dwTimeStart = dwTimeCur;
 
-	deltaTime += (dwTimeCur - dwTimeStart) / 1000.0f;
+	deltaTime = (dwTimeCur - dwTimeStart) / 1000.0f;
 
 	if (deltaTime < FPS_60)
 		return;
@@ -745,11 +745,18 @@ void Application::Update()
 	{
 		input.x += 1.0f;
 	}
+	if (GetAsyncKeyState('F'))
+	{
+		if (doIt)
+		{
+			doIt = false;
+			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, -1.0f, 0.5f));
+		}
+	}
+	else if (!doIt)
+		doIt = true;
 	input.Normalise();
 	_gameObjects[1]->GetComponent<Rigidbody>()->thrust = input * 1.0f;
-	rot += deltaTime*10;
-	rot = fmod(rot, 360);
-	_gameObjects[1]->GetTransform()->SetRotation(XMConvertToRadians(rot), 0.0f, 0.0f);
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 
