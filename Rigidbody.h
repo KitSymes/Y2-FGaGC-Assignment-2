@@ -26,7 +26,7 @@ private:
     Vector3 _brake;
 
     const float _dragCoeficient = 0.5f;
-    const float _angularDamping = 0.99f;
+    const float _angularDamping = 0.20f;
     bool _laminar = true;
 public:
     Rigidbody(bool useConstAccel, Vector3 initialVelocity, Vector3 initialAcceleration);

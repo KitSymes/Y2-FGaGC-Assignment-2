@@ -31,6 +31,7 @@ void Rigidbody::SetVelocity(Vector3 value)
 void Rigidbody::SetTorque(Vector3 force, Vector3 relativeLocation)
 {
 	_torque = relativeLocation.CrossProduct(force).ToXMFLOAT3();
+	CalculateAngularAcceleration();
 }
 
 void Rigidbody::SetInertiaTensor(float dx, float dy, float dz)
@@ -48,6 +49,7 @@ void Rigidbody::CalculateAngularAcceleration()
 {
 	XMMATRIX inverse = XMMatrixInverse(nullptr, XMLoadFloat3x3(&_inertiaTensor));
 	XMStoreFloat3(&_angularAcceleration, XMVector3Transform(XMLoadFloat3(&_torque), inverse));
+	_angularVelocity = Vector3(_angularAcceleration.x, _angularAcceleration.y, _angularAcceleration.z);
 }
 
 void Rigidbody::Update(float t)
@@ -72,17 +74,11 @@ void Rigidbody::Update(float t)
 	_velocity.y = _velocity.y + _acceleration.y * t;
 	_velocity.z = _velocity.z + _acceleration.z * t;
 
-	CalculateAngularAcceleration();
-	_angularVelocity = Vector3(_angularAcceleration.x , _angularAcceleration.y , _angularAcceleration.z );
 	_angularVelocity *= pow(_angularDamping, t);
 	Quaternion rot = _gameObject->GetTransform()->GetRotation();
 	rot.addScaledVector(_angularVelocity, t);
 	rot.normalise();
 	_gameObject->GetTransform()->SetRotation(rot);
-	//float powDamping = pow(_angularDamping, t);
-	//_angularAcceleration.x *= powDamping;
-	//_angularAcceleration.y *= powDamping;
-	//_angularAcceleration.z *= powDamping;
 }
 
 void Rigidbody::UpdateNetForce()
