@@ -15,7 +15,8 @@ protected:
 public:
 	void SetParent(GameObject* gameObject);
 
-	virtual void Update(float t);
+	GameObject* GetGameObject();
 
+	virtual void Update(float t);
 };
 #endif

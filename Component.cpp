@@ -9,3 +9,8 @@ void Component::SetParent(GameObject* gameObject)
 void Component::Update(float t)
 {
 }
+
+GameObject* Component::GetGameObject()
+{
+	return _gameObject;
+}

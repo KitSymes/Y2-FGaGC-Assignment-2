@@ -172,6 +172,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
+		gameObject->AddComponent(new SphereCollider(1.0f));
 
 		_gameObjects.push_back(gameObject);
 	}
@@ -750,7 +751,7 @@ void Application::Update()
 		if (doIt)
 		{
 			doIt = false;
-			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, -1.0f, 0.5f));
+			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.5f, -1.0f, 0.5f));
 		}
 	}
 	else if (!doIt)
