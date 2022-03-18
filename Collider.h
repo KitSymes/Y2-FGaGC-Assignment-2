@@ -5,13 +5,14 @@
 #include "Component.h"
 
 class SphereCollider;
-//class BoxCollider;
+class AABBCollider;
 
 class Collider :
 	public Component
 {
 public:
-	virtual bool Intersects(SphereCollider& collider) {};
-	//virtual bool Intersects(BoxCollider* collider) = 0;
+	virtual bool IntersectsVisit(Collider* collider) { return false; };
+	virtual bool Intersects(SphereCollider* collider) { return false; };
+	virtual bool Intersects(AABBCollider* collider) { return false; };
 };
 #endif

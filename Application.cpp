@@ -172,7 +172,10 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
-		gameObject->AddComponent(new SphereCollider(1.0f));
+		if (i == 0)
+		gameObject->AddComponent(new SphereCollider(0.5f));
+		else
+		gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 
 		_gameObjects.push_back(gameObject);
 	}
@@ -183,14 +186,15 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 	_gameObjects.push_back(gameObject);
 
-	/*for (int i = 0; i < _gameObjects.size(); i++)
+	for (int i = 0; i < _gameObjects.size(); i++)
 	{
-		Debug::GetInstance().Write(_gameObjects[i]->GetType().c_str());
-		if (_gameObjects[i]->GetComponent<Rigidbody>() == nullptr)
-			Debug::GetInstance().WriteLine(" does not have a rigidbody!");
-		else
-			Debug::GetInstance().WriteLine(" has a rigidbody!");
-	}*/
+		//Debug::GetInstance().Write(_gameObjects[i]->GetType().c_str());
+		Collider* col = _gameObjects[i]->GetComponent<Collider>();
+		if (col != nullptr)
+		{
+			_colliders.push_back(col);
+		}
+	}
 
 	return S_OK;
 }
@@ -780,6 +784,24 @@ void Application::Update()
 			//Debug::GetInstance().WriteLine("");
 		}
 		gameObject->Update(deltaTime);
+	}
+
+	for (int i = 0; i < _colliders.size(); i++)
+	{
+		if (_colliders[i]->GetGameObject()->GetTransform()->GetPosition().y < 0)
+		{
+			Vector3 temp = _colliders[i]->GetGameObject()->GetTransform()->GetPosition();
+			temp.y = 0;
+			_colliders[i]->GetGameObject()->GetTransform()->SetPosition(temp);
+		}
+		for (int j = i + 1; j < _colliders.size(); j++)
+		{
+			if (_colliders[i]->IntersectsVisit(_colliders[j]))
+			{
+				_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
+				_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
+			}
+		}
 	}
 
 	dwTimeStart = dwTimeCur;

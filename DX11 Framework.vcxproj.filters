@@ -40,6 +40,9 @@
     <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="AABBCollider.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -59,6 +62,9 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>

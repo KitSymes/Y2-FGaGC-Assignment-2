@@ -30,6 +30,7 @@
 #include "Vector3.h"
 #include "Rigidbody.h"
 #include "SphereCollider.h"
+#include "AABBCollider.h"
 
 #define NUMBER_OF_CUBES 2
 #define FPS_60 1.0f/60.0f
@@ -113,7 +114,8 @@ private:
 
 	Light basicLight;
 
-	vector<GameObject *> _gameObjects;
+	vector<GameObject*> _gameObjects;
+	vector<Collider*> _colliders;
 
 	Camera * _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;
