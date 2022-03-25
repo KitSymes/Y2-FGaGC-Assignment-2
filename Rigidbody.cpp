@@ -139,7 +139,11 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 	}
 	else
 	{
+		if (otherRB->_velocity.Magnitude() <= 0.01f)
 		Vector3 momentum = _mass * _velocity;
+		Vector3 otherMomentum = otherRB->_mass * otherRB->_velocity;
+
+		Vector3 impulse = 0.01f * _netForce;
 	}
 
 }

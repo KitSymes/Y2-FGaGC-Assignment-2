@@ -802,12 +802,15 @@ void Application::Update()
 				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
 				Rigidbody* rb = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
 
-				if (rb != nullptr)
+				if (rb != nullptr) // This one has a RB
+				{
+					if ()
 					rb->CollidedWith(_colliders[j]);
+				}
 				else
 				{
 					rb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
-					if (rb != nullptr)
+					if (rb != nullptr) // Only the other one has an RB
 						rb->CollidedWith(_colliders[i]);
 				}
 			}
