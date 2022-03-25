@@ -172,9 +172,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
-		if (i == 0)
-		gameObject->AddComponent(new SphereCollider(0.5f));
-		else
+		//if (i == 0)
+		//gameObject->AddComponent(new SphereCollider(0.5f));
+		//else
 		gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 
 		_gameObjects.push_back(gameObject);
@@ -798,8 +798,18 @@ void Application::Update()
 		{
 			if (_colliders[i]->IntersectsVisit(_colliders[j]))
 			{
-				_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
-				_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
+				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
+				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
+				Rigidbody* rb = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
+
+				if (rb != nullptr)
+					rb->CollidedWith(_colliders[j]);
+				else
+				{
+					rb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
+					if (rb != nullptr)
+						rb->CollidedWith(_colliders[i]);
+				}
 			}
 		}
 	}

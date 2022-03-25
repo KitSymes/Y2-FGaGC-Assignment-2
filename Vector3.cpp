@@ -119,3 +119,8 @@ DirectX::XMFLOAT3 Vector3::ToXMFLOAT3()
 {
 	return DirectX::XMFLOAT3(x, y, z);
 }
+
+Vector3 operator*(float lhs, Vector3& rhs)
+{
+	return rhs * lhs;
+}

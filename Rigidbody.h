@@ -4,6 +4,7 @@
 
 #include "Component.h"
 #include "Vector3.h"
+#include "Collider.h"
 
 using namespace DirectX;
 
@@ -41,6 +42,8 @@ public:
     void Update(float t);
     void UpdateNetForce();
     void UpdateAcceleration();
+
+    void CollidedWith(Collider* otherCollider);
 
     Vector3 thrust;
 };

@@ -122,3 +122,24 @@ void Rigidbody::UpdateAcceleration()
 	_acceleration.y = _netForce.y / _mass;
 	_acceleration.z = _netForce.z / _mass;
 }
+
+void Rigidbody::CollidedWith(Collider* otherCollider)
+{
+	Collider* collider = _gameObject->GetComponent<Collider>();
+	Rigidbody* otherRB = otherCollider->GetGameObject()->GetComponent<Rigidbody>();
+
+	if (otherRB == nullptr)
+	{
+		// Other object is unable to move
+		Vector3 normal = otherCollider->GetGameObject()->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
+		normal.Normalise();
+		normal *= -1;
+		Vector3 result = _velocity - 2.0f * normal.DotProduct(_velocity) * normal;
+		_velocity = result;
+	}
+	else
+	{
+		Vector3 momentum = _mass * _velocity;
+	}
+
+}

@@ -33,4 +33,6 @@ public:
 
 	DirectX::XMFLOAT3 ToXMFLOAT3();
 };
+
+Vector3 operator*(float lhs, Vector3& rhs); // Multiply this vector
 #endif

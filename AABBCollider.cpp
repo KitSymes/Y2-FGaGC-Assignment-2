@@ -31,25 +31,27 @@ float AABBCollider::Max(int axis)
 		return MAXINT;
 }
 
-bool AABBCollider::IntersectsVisit(Collider* collider)
+bool AABBCollider::IntersectsVisit(Collider* other)
 {
-	return collider->Intersects(this);
+	return other->Intersects(this);
 }
 
-bool AABBCollider::Intersects(AABBCollider* collider)
+bool AABBCollider::Intersects(AABBCollider* other)
 {
-	return false;
+	return (Min(0) <= other->Max(0) && Max(0) >= other->Min(0)) &&
+		(Min(1) <= other->Max(1) && Max(1) >= other->Min(1)) &&
+		(Min(2) <= other->Max(2) && Max(2) >= other->Min(2));
 }
 
-bool AABBCollider::Intersects(SphereCollider* collider)
+bool AABBCollider::Intersects(SphereCollider* other)
 {
 	float dmin = 0.0f;
 	for (int i = 0; i < 3; i++)
 	{
-		if (collider->Centre(i) < Min(i))
-			dmin += pow(collider->Centre(i) - Min(i), 2);
-		else if (collider->Centre(i) > Max(i))
-			dmin += pow(collider->Centre(i) - Max(i), 2);
+		if (other->Centre(i) < Min(i))
+			dmin += pow(other->Centre(i) - Min(i), 2);
+		else if (other->Centre(i) > Max(i))
+			dmin += pow(other->Centre(i) - Max(i), 2);
 	}
-	return dmin <= pow(collider->GetRadius(), 2);
+	return dmin <= pow(other->GetRadius(), 2);
 }
