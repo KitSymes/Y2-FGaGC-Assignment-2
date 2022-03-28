@@ -3,7 +3,7 @@
 GameObject::GameObject(string type, Geometry geometry, Material material) : _type(type)
 {
 	_parent = nullptr;
-	_transform = new Transform();
+	_transform = new Transform(this);
 	_appearance = new Appearance(geometry, material);
 }
 
@@ -29,10 +29,8 @@ void GameObject::Update(float t)
 	for (int i = 0; i < components.size(); i++)
 		components[i]->Update(t);
 
-	if (_parent != nullptr)
-	{
-		XMStoreFloat4x4(&_transform->GetWorld(), _transform->GetWorldMatrix() * _parent->_transform->GetWorldMatrix());
-	}
+	//if (_parent != nullptr)
+		//XMStoreFloat4x4(&_transform->GetWorld(), _transform->GetWorldMatrix() * _parent->_transform->GetWorldMatrix());
 }
 
 void GameObject::Draw(ID3D11DeviceContext* pImmediateContext)

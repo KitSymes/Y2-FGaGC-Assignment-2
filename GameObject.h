@@ -24,6 +24,7 @@ public:
 	string GetType() const { return _type; }
 
 	void SetParent(GameObject* parent) { _parent = parent; }
+	GameObject* GetParent() { return _parent; }
 
 	Transform* GetTransform() const { return _transform; }
 	Appearance* GetAppearance() const { return _appearance; }

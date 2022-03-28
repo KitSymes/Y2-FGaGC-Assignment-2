@@ -10,10 +10,11 @@
 
 using namespace DirectX;
 
+class GameObject;
 class Transform
 {
 public:
-	Transform();
+	Transform(GameObject* gameObject);
 	~Transform();
 
 	// Setters and Getters for position/rotation/scale
@@ -58,6 +59,8 @@ public:
 
 	void Update(float t);
 private:
+	GameObject* _gameObject;
+
 	Vector3 _position;
 	Quaternion _rotation;
 	Vector3 _scale;

@@ -45,6 +45,11 @@ void Rigidbody::SetInertiaTensor(float dx, float dy, float dz)
 	_inertiaTensor._33 = massMulti * (dx*dx + dy*dy);
 }
 
+void Rigidbody::SetMass(float mass)
+{
+	_mass = mass;
+}
+
 void Rigidbody::CalculateAngularAcceleration()
 {
 	XMMATRIX inverse = XMMatrixInverse(nullptr, XMLoadFloat3x3(&_inertiaTensor));
@@ -94,7 +99,7 @@ void Rigidbody::UpdateNetForce()
 			_dragCoeficient * _velocity.y,
 			_dragCoeficient * _velocity.z);
 	}
-	else
+	else // Turbulent
 	{
 		// Calculate Velocity Magnitude
 		float velMag = _velocity.Magnitude();
@@ -103,7 +108,7 @@ void Rigidbody::UpdateNetForce()
 		unitVel.Normalise();
 
 		// Drag Force Magnitude
-		float dragMag = _dragCoeficient * velMag * velMag;
+		float dragMag = _dragCoeficient * velMag * velMag; // 0.5f * fluidDensity * _dragCoeficient * referenceArea * velMag * velMag
 
 		// Calculate Drag
 		drag = Vector3(dragMag * unitVel.x,
@@ -139,13 +144,41 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 	}
 	else
 	{
-		if (otherRB->_velocity.Magnitude() <= 0.01f)
+		// penetration depth stuff
 		{
-			Vector3 momentum = _mass * _velocity;
-			Vector3 otherMomentum = otherRB->_mass * otherRB->_velocity;
-
-			Vector3 impulse = 0.01f * _netForce;
+			Vector3 normal = Vector3(); // Penetration Normal from this object's perspective
+			float depth = normal.Magnitude(); // Penetration Depth
+			normal.Normalise();
+			Vector3 deltaPa = (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
+			Vector3 deltaPb = -1 * (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
 		}
+
+		// Modelling Collisions between two moving objects, considering elasticity
+		//if (otherRB->_velocity.Magnitude() <= 0.001f)
+		{
+			//Vector3 momentum = _velocity * _mass;
+			//Vector3 otherMomentum = otherRB->_velocity * otherRB->_mass;
+			float elasticity = 0.5f;
+			// mass gets ignored here because lecture notes just drop it? How do you work backwards with mass?
+			Vector3 V1fminusV2f = -elasticity * (_velocity - otherRB->_velocity);
+			Vector3 V1fplusV2f = _velocity + otherRB->_velocity; // Both should be multiplied by their mass,
+			// but this causes issues as lecture notes just say assuming they have the same mass
+			Vector3 v1f = (V1fplusV2f - V1fminusV2f) / 2.0f;
+			Vector3 v2f = (V1fplusV2f + V1fminusV2f) / 2.0f;
+
+			_velocity = v1f;
+			otherRB->_velocity = v2f;
+		}
+		/*{
+			// Using Kinetic Energy and Conservation of Momentum
+			float M1 = _mass;
+			float M2 = otherRB->_mass;
+			Vector3 v1f = ((M1 - M2) / (M1 + M2)) * _velocity + ((2.0f * M2) / (M1 + M2)) * otherRB->_velocity;
+			Vector3 v2f = ((M2 - M1) / (M1 + M2)) * otherRB->_velocity + ((2.0f * M1) / (M1 + M2)) * _velocity;
+
+			_velocity = v1f;
+			otherRB->_velocity = v2f;
+		}*/
 	}
 
 }

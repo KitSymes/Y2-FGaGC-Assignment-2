@@ -1,7 +1,9 @@
 #include "Transform.h"
+#include "GameObject.h"
 
-Transform::Transform()
+Transform::Transform(GameObject* gameObject)
 {
+	_gameObject = gameObject;
 	_position = Vector3();
 	XMVECTOR vectorQ = XMQuaternionRotationMatrix(XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(0.0f));
 	XMFLOAT4 float4Q;
@@ -22,6 +24,8 @@ void Transform::Update(float t)
 	XMMATRIX rotation;
 	CalculateTransformMatrixRowMajor(rotation, Vector3(), _rotation);
 	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
-
-	XMStoreFloat4x4(&_world, scale * rotation * translation);
+	XMMATRIX world = scale * rotation * translation;
+	if (_gameObject->GetParent() != nullptr)
+		world *= _gameObject->GetParent()->GetTransform()->GetWorldMatrix(); // TODO parent may not have been updated this frame
+	XMStoreFloat4x4(&_world, world);
 }

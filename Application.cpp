@@ -176,6 +176,8 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		//gameObject->AddComponent(new SphereCollider(0.5f));
 		//else
 		gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		if (i == 0)
+			gameObject->GetComponent<Rigidbody>()->SetMass(2.0f);
 
 		_gameObjects.push_back(gameObject);
 	}
@@ -800,19 +802,24 @@ void Application::Update()
 			{
 				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
 				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
-				Rigidbody* rb = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
+				Rigidbody* rbI = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
+				Rigidbody* rbJ = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
 
-				if (rb != nullptr) // This one has a RB
+				if (rbI != nullptr) // This one has a RB
 				{
-					if ()
-					rb->CollidedWith(_colliders[j]);
+					if (rbJ != nullptr)
+					{
+						// Pick the object with the higher momentum to act on
+						if (rbI->GetVelocity().Magnitude() * rbI->GetMass() >= rbJ->GetVelocity().Magnitude() * rbJ->GetMass())
+							rbI->CollidedWith(_colliders[j]);
+						else
+							rbJ->CollidedWith(_colliders[i]);
+					}
+					else
+						rbI->CollidedWith(_colliders[j]);
 				}
-				else
-				{
-					rb = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
-					if (rb != nullptr) // Only the other one has an RB
-						rb->CollidedWith(_colliders[i]);
-				}
+				else if (rbJ != nullptr) // Only the other one has an RB
+					rbJ->CollidedWith(_colliders[i]);
 			}
 		}
 	}
