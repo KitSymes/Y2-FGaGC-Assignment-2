@@ -84,11 +84,12 @@ void Rigidbody::Update(float t)
 	rot.addScaledVector(_angularVelocity, t);
 	rot.normalise();
 	_gameObject->GetTransform()->SetRotation(rot);
+
+	_netForce = Vector3();
 }
 
 void Rigidbody::UpdateNetForce()
 {
-	_netForce = Vector3();
 	_netForce += thrust;
 	_netForce += _brake;
 	Vector3 drag;
@@ -108,7 +109,9 @@ void Rigidbody::UpdateNetForce()
 		unitVel.Normalise();
 
 		// Drag Force Magnitude
-		float dragMag = _dragCoeficient * velMag * velMag; // 0.5f * fluidDensity * _dragCoeficient * referenceArea * velMag * velMag
+		float referenceArea = 1.0f;
+		float fluidDensityAir = 1.225;
+		float dragMag = 0.5f * fluidDensityAir * _dragCoeficient * referenceArea * velMag * velMag;
 
 		// Calculate Drag
 		drag = Vector3(dragMag * unitVel.x,
