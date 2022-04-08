@@ -169,7 +169,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		std::string name = "Cube " + to_string(i);
 		gameObject = new GameObject(name, cubeGeometry, shinyMaterial);
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 0.5f, 5.0f);
+		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 10.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
 		//if (i == 0)
@@ -756,14 +756,16 @@ void Application::Update()
 	{
 		if (doIt)
 		{
-			doIt = false;
-			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.5f, -1.0f, 0.5f));
+			//doIt = false;
+			//_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.5f, -1.0f, 0.5f));
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 100.0f, 0.0f));
 		}
 	}
 	else if (!doIt)
 		doIt = true;
 	input.Normalise();
 	_gameObjects[1]->GetComponent<Rigidbody>()->thrust = input * 1.0f;
+
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
 
@@ -790,10 +792,10 @@ void Application::Update()
 
 	for (int i = 0; i < _colliders.size(); i++)
 	{
-		if (_colliders[i]->GetGameObject()->GetTransform()->GetPosition().y < 0)
+		if (_colliders[i]->GetGameObject()->GetTransform()->GetPosition().y < 0.5f)
 		{
 			Vector3 temp = _colliders[i]->GetGameObject()->GetTransform()->GetPosition();
-			temp.y = 0;
+			temp.y = 0.5f;
 			_colliders[i]->GetGameObject()->GetTransform()->SetPosition(temp);
 		}
 		for (int j = i + 1; j < _colliders.size(); j++)

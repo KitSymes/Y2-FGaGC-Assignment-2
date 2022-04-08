@@ -28,6 +28,11 @@ private:
 
     const float _dragCoeficient = 1.05f;
     const float _angularDamping = 0.20f;
+    const float _gravity = 9.81f;
+    const float _frictionCoefficient = 0.5f;
+    const float _referenceArea = 1.0f;
+    const float _fluidDensityAir = 1.225;
+
     bool _laminar = true;
 public:
     Rigidbody(bool useConstAccel, Vector3 initialVelocity, Vector3 initialAcceleration);
@@ -45,9 +50,10 @@ public:
     void CalculateAngularAcceleration();
 
     void Update(float t);
-    void UpdateNetForce();
+    void UpdateNetForce(float t);
     void UpdateAcceleration();
 
+    void AddForce(Vector3 force);
     void CollidedWith(Collider* otherCollider);
 
     Vector3 thrust;

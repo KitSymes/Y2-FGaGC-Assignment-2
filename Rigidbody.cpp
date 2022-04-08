@@ -40,9 +40,9 @@ void Rigidbody::SetInertiaTensor(float dx, float dy, float dz)
 
 	float massMulti = (1.0f / 12.0f) * _mass;
 
-	_inertiaTensor._11 = massMulti * (dy*dy + dz*dz);
-	_inertiaTensor._22 = massMulti * (dx*dx + dz*dz);
-	_inertiaTensor._33 = massMulti * (dx*dx + dy*dy);
+	_inertiaTensor._11 = massMulti * (dy * dy + dz * dz);
+	_inertiaTensor._22 = massMulti * (dx * dx + dz * dz);
+	_inertiaTensor._33 = massMulti * (dx * dx + dy * dy);
 }
 
 void Rigidbody::SetMass(float mass)
@@ -60,7 +60,7 @@ void Rigidbody::CalculateAngularAcceleration()
 void Rigidbody::Update(float t)
 {
 	// calculate net external force
-	UpdateNetForce();
+	UpdateNetForce(t);
 
 	// update acceleration of object using Newton’s second law of motion  
 	// Assumption: net external force is constant between consecutive updates of object state
@@ -88,30 +88,30 @@ void Rigidbody::Update(float t)
 	_netForce = Vector3();
 }
 
-void Rigidbody::UpdateNetForce()
+void Rigidbody::UpdateNetForce(float t)
 {
+	// Calculate Velocity Magnitude
+	float velMag = _velocity.Magnitude();
+	// Calculate Normalised (Unit Vector) Velocity
+	Vector3 unitVel = _velocity;
+	unitVel.Normalise();
+
 	_netForce += thrust;
 	_netForce += _brake;
+	_netForce -= min(_mass * _gravity * _frictionCoefficient, _velocity.Magnitude()) * unitVel; // Friction
+
 	Vector3 drag;
 	if (_laminar)
 	{
 		// Calculate Drag
-		drag = Vector3(_dragCoeficient * _velocity.x,
-			_dragCoeficient * _velocity.y,
-			_dragCoeficient * _velocity.z);
+		float dragMag = 0.5f * _fluidDensityAir * _dragCoeficient * _referenceArea * velMag;
+
+		drag = Vector3(dragMag * _velocity.x, dragMag * _velocity.y, dragMag * _velocity.z);
 	}
 	else // Turbulent
 	{
-		// Calculate Velocity Magnitude
-		float velMag = _velocity.Magnitude();
-		// Calculate Normalised (Unit Vector) Velocity
-		Vector3 unitVel = _velocity;
-		unitVel.Normalise();
-
 		// Drag Force Magnitude
-		float referenceArea = 1.0f;
-		float fluidDensityAir = 1.225;
-		float dragMag = 0.5f * fluidDensityAir * _dragCoeficient * referenceArea * velMag * velMag;
+		float dragMag = 0.5f * _fluidDensityAir * _dragCoeficient * _referenceArea * velMag * velMag;
 
 		// Calculate Drag
 		drag = Vector3(dragMag * unitVel.x,
@@ -120,7 +120,9 @@ void Rigidbody::UpdateNetForce()
 
 	}
 	_netForce -= drag;
-	//_netForce += Vector3(0.0f, _mass * 9.81f, 0.0f); // Gravity
+
+	if (_gameObject->GetTransform()->GetPosition().y > 0.5f)
+		_netForce -= Vector3(0.0f, _mass * _gravity, 0.0f); // Gravity
 }
 
 void Rigidbody::UpdateAcceleration()
@@ -129,6 +131,11 @@ void Rigidbody::UpdateAcceleration()
 	_acceleration.x = _netForce.x / _mass;
 	_acceleration.y = _netForce.y / _mass;
 	_acceleration.z = _netForce.z / _mass;
+}
+
+void Rigidbody::AddForce(Vector3 force)
+{
+	_netForce += force;
 }
 
 void Rigidbody::CollidedWith(Collider* otherCollider)
