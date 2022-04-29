@@ -1,5 +1,6 @@
 #include "AABBCollider.h"
 #include "SphereCollider.h"
+#include "OBBCollider.h"
 
 AABBCollider::AABBCollider(Vector3 min, Vector3 max)
 {
@@ -36,13 +37,6 @@ bool AABBCollider::IntersectsVisit(Collider* other)
 	return other->Intersects(this);
 }
 
-bool AABBCollider::Intersects(AABBCollider* other)
-{
-	return (Min(0) <= other->Max(0) && Max(0) >= other->Min(0)) &&
-		(Min(1) <= other->Max(1) && Max(1) >= other->Min(1)) &&
-		(Min(2) <= other->Max(2) && Max(2) >= other->Min(2));
-}
-
 bool AABBCollider::Intersects(SphereCollider* other)
 {
 	float dmin = 0.0f;
@@ -54,4 +48,16 @@ bool AABBCollider::Intersects(SphereCollider* other)
 			dmin += pow(other->Centre(i) - Max(i), 2);
 	}
 	return dmin <= pow(other->GetRadius(), 2);
+}
+
+bool AABBCollider::Intersects(AABBCollider* other)
+{
+	return (Min(0) <= other->Max(0) && Max(0) >= other->Min(0)) &&
+		(Min(1) <= other->Max(1) && Max(1) >= other->Min(1)) &&
+		(Min(2) <= other->Max(2) && Max(2) >= other->Min(2));
+}
+
+bool AABBCollider::Intersects(OBBCollider* other)
+{
+	return false;
 }

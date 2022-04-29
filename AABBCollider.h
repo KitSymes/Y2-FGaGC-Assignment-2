@@ -18,6 +18,7 @@ public:
 	bool IntersectsVisit(Collider* collider) override;
 	bool Intersects(SphereCollider* collider) override;
 	bool Intersects(AABBCollider* collider) override;
+	bool Intersects(OBBCollider* collider) override;
 private:
 	Vector3 _min;
 	Vector3 _max;

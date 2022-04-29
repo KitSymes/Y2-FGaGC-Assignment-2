@@ -379,6 +379,7 @@
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="OBBCollider.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -401,6 +402,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="OBBCollider.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Quaternion.h" />
     <CLInclude Include="resource.h" />

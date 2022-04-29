@@ -1,5 +1,6 @@
 #include "SphereCollider.h"
 #include "AABBCollider.h"
+#include "OBBCollider.h"
 
 SphereCollider::SphereCollider(float radius)
 {
@@ -40,4 +41,9 @@ bool SphereCollider::Intersects(AABBCollider* collider)
 			dmin += pow(Centre(i) - collider->Max(i), 2);
 	}
 	return dmin <= pow(_radius, 2);
+}
+
+bool SphereCollider::Intersects(OBBCollider* other)
+{
+	return false;
 }
