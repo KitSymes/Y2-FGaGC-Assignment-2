@@ -1,6 +1,7 @@
 #include "Vector3.h"
 #include <assert.h>
 #include <math.h>
+#include "Quaternion.h"
 
 Vector3::Vector3() : Vector3(0.0f, 0.0f, 0.0f) {}
 
@@ -123,4 +124,17 @@ DirectX::XMFLOAT3 Vector3::ToXMFLOAT3()
 Vector3 operator*(float lhs, Vector3& rhs)
 {
 	return rhs * lhs;
+}
+
+Vector3 operator*(Quaternion lhs, Vector3& rhs)
+{
+	Quaternion P = Quaternion(0.0f, rhs.x, rhs.y, rhs.z);
+	Quaternion Ri = lhs;
+	Ri.i *= -1;
+	Ri.j *= -1;
+	Ri.k *= -1;
+	Quaternion result = lhs;
+	result *= P;
+	result *= Ri;
+	return Vector3(result.i, result.j, result.k);
 }

@@ -155,13 +155,13 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 	else
 	{
 		// penetration depth stuff
-		{
-			Vector3 normal = Vector3(); // Penetration Normal from this object's perspective
-			float depth = normal.Magnitude(); // Penetration Depth
-			normal.Normalise();
-			Vector3 deltaPa = (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
-			Vector3 deltaPb = -1 * (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
-		}
+		//{
+		//	Vector3 normal = Vector3(); // Penetration Normal from this object's perspective
+		//	float depth = normal.Magnitude(); // Penetration Depth
+		//	normal.Normalise();
+		//	Vector3 deltaPa = (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
+		//	Vector3 deltaPb = -1 * (otherRB->_mass / (_mass + otherRB->_mass)) * depth * normal;
+		//}
 
 		// Modelling Collisions between two moving objects, considering elasticity
 		//if (otherRB->_velocity.Magnitude() <= 0.001f)

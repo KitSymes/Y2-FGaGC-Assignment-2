@@ -169,13 +169,14 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		std::string name = "Cube " + to_string(i);
 		gameObject = new GameObject(name, cubeGeometry, shinyMaterial);
 		gameObject->GetTransform()->SetScale(0.5f, 0.5f, 0.5f);
-		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 10.5f, 5.0f);
+		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 2.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
 		//if (i == 0)
 		//gameObject->AddComponent(new SphereCollider(0.5f));
 		//else
-		gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 		if (i == 0)
 			gameObject->GetComponent<Rigidbody>()->SetMass(2.0f);
 
@@ -737,32 +738,30 @@ void Application::Update()
 
 	Vector3 input = Vector3();
 	if (GetAsyncKeyState('W'))
-	{
 		input.z += 1.0f;
-	}
+
 	if (GetAsyncKeyState('S'))
-	{
 		input.z -= 1.0f;
-	}
+
 	if (GetAsyncKeyState('A'))
-	{
 		input.x -= 1.0f;
-	}
+
 	if (GetAsyncKeyState('D'))
-	{
 		input.x += 1.0f;
-	}
+
 	if (GetAsyncKeyState('F'))
 	{
 		if (doIt)
 		{
-			//doIt = false;
-			//_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.5f, -1.0f, 0.5f));
-			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 100.0f, 0.0f));
+			doIt = false;
+			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 0.2f, 0.0f), Vector3(0.5f, -1.0f, 0.0f));
 		}
 	}
 	else if (!doIt)
 		doIt = true;
+	if (GetAsyncKeyState('G'))
+		_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 100.0f, 0.0f));
+
 	input.Normalise();
 	_gameObjects[1]->GetComponent<Rigidbody>()->thrust = input * 1.0f;
 
@@ -903,5 +902,5 @@ void Application::Draw()
 	//
 	// Present our back buffer to our front buffer
 	//
-	_pSwapChain->Present(0, 0);
+	_pSwapChain->Present(1, 0);
 }

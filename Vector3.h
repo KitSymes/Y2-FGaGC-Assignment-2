@@ -3,6 +3,7 @@
 #define _VECTOR3_H
 
 #include <DirectXMath.h>
+class Quaternion;
 
 class Vector3
 {
@@ -35,4 +36,5 @@ public:
 };
 
 Vector3 operator*(float lhs, Vector3& rhs); // Multiply this vector
+Vector3 operator*(Quaternion lhs, Vector3& rhs); // Multiply this vector
 #endif
