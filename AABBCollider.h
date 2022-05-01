@@ -15,6 +15,9 @@ public:
 	float Min(int axis);
 	float Max(int axis);
 
+	Vector3 GetMin() { return _min; }
+	Vector3 GetMax() { return _max; }
+
 	bool IntersectsVisit(Collider* collider) override;
 	bool Intersects(SphereCollider* collider) override;
 	bool Intersects(AABBCollider* collider) override;

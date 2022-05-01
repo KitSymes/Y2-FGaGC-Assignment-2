@@ -59,5 +59,5 @@ bool AABBCollider::Intersects(AABBCollider* other)
 
 bool AABBCollider::Intersects(OBBCollider* other)
 {
-	return false;
+	return other->Intersects(this);
 }

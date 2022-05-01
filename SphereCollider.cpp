@@ -45,5 +45,5 @@ bool SphereCollider::Intersects(AABBCollider* collider)
 
 bool SphereCollider::Intersects(OBBCollider* other)
 {
-	return false;
+	return other->Intersects(this);
 }

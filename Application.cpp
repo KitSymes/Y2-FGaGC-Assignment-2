@@ -172,11 +172,11 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 2.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
-		//if (i == 0)
-		//gameObject->AddComponent(new SphereCollider(0.5f));
-		//else
-		//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
-		gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		if (i == 0)
+			gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		else
+			gameObject->AddComponent(new SphereCollider(0.5f));
+			//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 		if (i == 0)
 			gameObject->GetComponent<Rigidbody>()->SetMass(2.0f);
 
