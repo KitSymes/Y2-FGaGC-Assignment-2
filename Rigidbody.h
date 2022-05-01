@@ -54,6 +54,7 @@ public:
     void UpdateAcceleration();
 
     void AddForce(Vector3 force);
+    void AddForce(Vector3 force, Vector3 relativeLocation);
     void CollidedWith(Collider* otherCollider);
 
     Vector3 thrust;

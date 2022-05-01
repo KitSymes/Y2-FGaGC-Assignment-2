@@ -15,10 +15,10 @@ public:
 	float GetRadius() { return _radius; };
 	float Centre(int axis);
 
-	bool IntersectsVisit(Collider* collider) override; 
-	bool Intersects(SphereCollider* collider) override;
-	bool Intersects(AABBCollider* collider) override;
-	bool Intersects(OBBCollider* collider) override;
+	bool IntersectsVisit(Collider* other, float deltaTime) override;
+	bool Intersects(SphereCollider* other, float deltaTime) override;
+	bool Intersects(AABBCollider* other, float deltaTime) override;
+	bool Intersects(OBBCollider* other, float deltaTime) override;
 private:
 	float _radius;
 

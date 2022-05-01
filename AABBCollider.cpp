@@ -1,6 +1,7 @@
 #include "AABBCollider.h"
 #include "SphereCollider.h"
 #include "OBBCollider.h"
+#include "Rigidbody.h"
 
 AABBCollider::AABBCollider(Vector3 min, Vector3 max)
 {
@@ -32,32 +33,56 @@ float AABBCollider::Max(int axis)
 		return MAXINT;
 }
 
-bool AABBCollider::IntersectsVisit(Collider* other)
+bool AABBCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
-	return other->Intersects(this);
+	return other->Intersects(this, deltaTime);
 }
 
-bool AABBCollider::Intersects(SphereCollider* other)
+bool AABBCollider::Intersects(SphereCollider* other, float deltaTime)
 {
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
+	vector<float> selfOffsetVec;
+	selfOffsetVec.push_back(selfOffset.x);
+	selfOffsetVec.push_back(selfOffset.y);
+	selfOffsetVec.push_back(selfOffset.z);
+	vector<float> otherOffsetVec;
+	otherOffsetVec.push_back(otherOffset.x);
+	otherOffsetVec.push_back(otherOffset.y);
+	otherOffsetVec.push_back(otherOffset.z);
+
 	float dmin = 0.0f;
 	for (int i = 0; i < 3; i++)
 	{
-		if (other->Centre(i) < Min(i))
-			dmin += pow(other->Centre(i) - Min(i), 2);
-		else if (other->Centre(i) > Max(i))
-			dmin += pow(other->Centre(i) - Max(i), 2);
+		if (other->Centre(i) + otherOffsetVec[i] < Min(i) + selfOffsetVec[i])
+			dmin += pow(other->Centre(i) + otherOffsetVec[i] - Min(i) + selfOffsetVec[i], 2);
+		else if (other->Centre(i) + otherOffsetVec[i] > Max(i) + selfOffsetVec[i])
+			dmin += pow(other->Centre(i) + otherOffsetVec[i] - Max(i) + selfOffsetVec[i], 2);
 	}
 	return dmin <= pow(other->GetRadius(), 2);
 }
 
-bool AABBCollider::Intersects(AABBCollider* other)
+bool AABBCollider::Intersects(AABBCollider* other, float deltaTime)
 {
-	return (Min(0) <= other->Max(0) && Max(0) >= other->Min(0)) &&
-		(Min(1) <= other->Max(1) && Max(1) >= other->Min(1)) &&
-		(Min(2) <= other->Max(2) && Max(2) >= other->Min(2));
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
+	return 
+		(Min(0) + selfOffset.x <= other->Max(0) + otherOffset.x && Max(0) + selfOffset.x >= other->Min(0) + otherOffset.x) &&
+		(Min(1) + selfOffset.y <= other->Max(1) + otherOffset.y && Max(1) + selfOffset.y >= other->Min(1) + otherOffset.y) &&
+		(Min(2) + selfOffset.z <= other->Max(2) + otherOffset.z && Max(2) + selfOffset.z >= other->Min(2) + otherOffset.z);
 }
 
-bool AABBCollider::Intersects(OBBCollider* other)
+bool AABBCollider::Intersects(OBBCollider* other, float deltaTime)
 {
-	return other->Intersects(this);
+	return other->Intersects(this, deltaTime);
 }

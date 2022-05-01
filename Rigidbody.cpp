@@ -138,6 +138,12 @@ void Rigidbody::AddForce(Vector3 force)
 	_netForce += force;
 }
 
+void Rigidbody::AddForce(Vector3 force, Vector3 relativeLocation)
+{
+	AddForce(force);
+	SetTorque(force, relativeLocation);
+}
+
 void Rigidbody::CollidedWith(Collider* otherCollider)
 {
 	Collider* collider = _gameObject->GetComponent<Collider>();

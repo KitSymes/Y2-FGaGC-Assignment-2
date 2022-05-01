@@ -33,7 +33,7 @@
 #include "AABBCollider.h"
 #include "OBBCollider.h"
 
-#define NUMBER_OF_CUBES 2
+#define NUMBER_OF_CUBES 3
 #define FPS_60 1.0f/60.0f
 
 using namespace DirectX;

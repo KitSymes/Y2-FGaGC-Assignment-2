@@ -1,6 +1,7 @@
 #include "SphereCollider.h"
 #include "AABBCollider.h"
 #include "OBBCollider.h"
+#include "Rigidbody.h"
 
 SphereCollider::SphereCollider(float radius)
 {
@@ -19,31 +20,30 @@ float SphereCollider::Centre(int axis)
 		return MININT;
 }
 
-bool SphereCollider::IntersectsVisit(Collider* collider)
+bool SphereCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
-	return collider->Intersects(this);
+	return other->Intersects(this, deltaTime);
 }
 
-bool SphereCollider::Intersects(SphereCollider* collider)
+bool SphereCollider::Intersects(SphereCollider* other, float deltaTime)
 {
-	Vector3 difference = collider->GetGameObject()->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
-	return difference.x * difference.x + difference.y * difference.y + difference.z * difference.z <= _radius + collider->GetRadius();
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
+	Vector3 difference = (other->GetGameObject()->GetTransform()->GetPosition() + otherOffset) - (_gameObject->GetTransform()->GetPosition() + selfOffset);
+	return difference.x * difference.x + difference.y * difference.y + difference.z * difference.z <= _radius + other->GetRadius();
 }
 
-bool SphereCollider::Intersects(AABBCollider* collider)
+bool SphereCollider::Intersects(AABBCollider* other, float deltaTime)
 {
-	float dmin = 0.0f;
-	for (int i = 0; i < 3; i++)
-	{
-		if (Centre(i) < collider->Min(i))
-			dmin += pow(Centre(i) - collider->Min(i), 2);
-		else if (Centre(i) > collider->Max(i))
-			dmin += pow(Centre(i) - collider->Max(i), 2);
-	}
-	return dmin <= pow(_radius, 2);
+	return other->Intersects(this, deltaTime);
 }
 
-bool SphereCollider::Intersects(OBBCollider* other)
+bool SphereCollider::Intersects(OBBCollider* other, float deltaTime)
 {
-	return other->Intersects(this);
+	return other->Intersects(this, deltaTime);
 }

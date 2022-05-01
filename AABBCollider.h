@@ -18,10 +18,10 @@ public:
 	Vector3 GetMin() { return _min; }
 	Vector3 GetMax() { return _max; }
 
-	bool IntersectsVisit(Collider* collider) override;
-	bool Intersects(SphereCollider* collider) override;
-	bool Intersects(AABBCollider* collider) override;
-	bool Intersects(OBBCollider* collider) override;
+	bool IntersectsVisit(Collider* other, float deltaTime) override;
+	bool Intersects(SphereCollider* other, float deltaTime) override;
+	bool Intersects(AABBCollider* other, float deltaTime) override;
+	bool Intersects(OBBCollider* other, float deltaTime) override;
 private:
 	Vector3 _min;
 	Vector3 _max;

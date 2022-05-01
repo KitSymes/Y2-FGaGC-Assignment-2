@@ -1,6 +1,7 @@
 #include "OBBCollider.h"
 #include "AABBCollider.h"
 #include "SphereCollider.h"
+#include "Rigidbody.h"
 
 OBBCollider::OBBCollider(Vector3 min, Vector3 max)
 {
@@ -32,14 +33,21 @@ float OBBCollider::Max(int axis)
 		return MAXINT;
 }
 
-bool OBBCollider::IntersectsVisit(Collider* other)
+bool OBBCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
-	return other->Intersects(this);
+	return other->Intersects(this, deltaTime);
 }
 
-bool OBBCollider::Intersects(SphereCollider* other)
+bool OBBCollider::Intersects(SphereCollider* other, float deltaTime)
 {
-	Vector3 localSphereCenter = other->GetGameObject()->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
+	Vector3 localSphereCenter = (other->GetGameObject()->GetTransform()->GetPosition() + otherOffset) - (_gameObject->GetTransform()->GetPosition() + selfOffset);
 	Vector3 closest = Vector3(max(_min.x, min(localSphereCenter.x, _max.x)),
 		max(_min.y, min(localSphereCenter.y, _max.y)),
 		max(_min.z, min(localSphereCenter.z, _max.z)));
@@ -51,30 +59,37 @@ bool OBBCollider::Intersects(SphereCollider* other)
 	return (translation.x <= 0.0f && translation.y <= 0.0f && translation.z <= 0.0f);
 }
 
-bool OBBCollider::Intersects(AABBCollider* other)
+bool OBBCollider::Intersects(AABBCollider* other, float deltaTime)
 {
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
 	// Seperating Axis Theorem
 	Quaternion selfRotation = _gameObject->GetTransform()->GetRotation();
 
 	vector<Vector3> selfVerticies;
-	selfVerticies.push_back(selfRotation * _min + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _min.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * _max + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * _min + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * _max + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
 
 	vector<Vector3> otherVerticies;
-	otherVerticies.push_back(other->GetMin() + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMin().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(other->GetMax() + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMax().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
+	otherVerticies.push_back(other->GetMin() + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMin().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(other->GetMax() + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMin().x, other->GetMax().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(Vector3(other->GetMax().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
 
 	float selfMinBound, selfMaxBound, otherMinBound, otherMaxBound;
 
@@ -193,31 +208,38 @@ bool OBBCollider::Intersects(AABBCollider* other)
 	return true;
 }
 
-bool OBBCollider::Intersects(OBBCollider* other)
+bool OBBCollider::Intersects(OBBCollider* other, float deltaTime)
 {
+	Vector3 selfOffset = Vector3();
+	if (_gameObject->GetComponent<Rigidbody>() != nullptr)
+		selfOffset = _gameObject->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+	Vector3 otherOffset = Vector3();
+	if (other->GetGameObject()->GetComponent<Rigidbody>() != nullptr)
+		otherOffset = other->GetGameObject()->GetComponent<Rigidbody>()->GetVelocity() * deltaTime;
+
 	// Seperating Axis Theorem
 	Quaternion selfRotation = _gameObject->GetTransform()->GetRotation();
 	Quaternion otherRotation = other->GetGameObject()->GetTransform()->GetRotation();
 
 	vector<Vector3> selfVerticies;
-	selfVerticies.push_back(selfRotation * _min + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _min.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * _max + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
-	selfVerticies.push_back(selfRotation * Vector3(_max.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * _min + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * _max + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition() + selfOffset * deltaTime);
 
 	vector<Vector3> otherVerticies;
-	otherVerticies.push_back(otherRotation * other->GetMin() + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMin().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * other->GetMax() + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMax().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition());
-	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition());
+	otherVerticies.push_back(otherRotation * other->GetMin() + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMin().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * other->GetMax() + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMin().x, other->GetMax().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMin().y, other->GetMax().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
+	otherVerticies.push_back(otherRotation * Vector3(other->GetMax().x, other->GetMax().y, other->GetMin().x) + other->GetGameObject()->GetTransform()->GetPosition() + otherOffset * deltaTime);
 
 	float selfMinBound, selfMaxBound, otherMinBound, otherMaxBound;
 

@@ -172,10 +172,10 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetTransform()->SetPosition(-4.0f + (i * 2.0f), 2.5f, 5.0f);
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
-		if (i == 0)
-			gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
-		else
-			gameObject->AddComponent(new SphereCollider(0.5f));
+		gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
+		//if (i == 0)
+		//else
+			//gameObject->AddComponent(new SphereCollider(0.5f));
 			//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 		if (i == 0)
 			gameObject->GetComponent<Rigidbody>()->SetMass(2.0f);
@@ -701,6 +701,7 @@ void Application::moveBackward(int objectNumber)
 }
 
 bool doIt = true;
+bool test4 = true;
 void Application::Update()
 {
 	// Update our time
@@ -720,21 +721,74 @@ void Application::Update()
 	// Move gameobject
 	if (GetAsyncKeyState('1'))
 	{
-		moveForward(1);
+		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 10.0f);
+		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
 	}
 	if (GetAsyncKeyState('2'))
 	{
-		moveForward(2);
+		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 5.0f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
+		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+
+		_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(50.0f, 0.0f, 0.0f));
 	}
 
 	if (GetAsyncKeyState('3'))
 	{
-		moveBackward(3);
+		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
+		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
+		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+
+		_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(-0.5f, 0.0f, 0.5f));
+		_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.0f, 0.5f, 0.5f));
+		_gameObjects[3]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.5f, 0.0f, 0.5f));
 	}
+
 	if (GetAsyncKeyState('4'))
 	{
-		moveBackward(4);
+		if (test4)
+		{
+			_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+			_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(50.0f, 0.0f, 0.0f));
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-50.0f, 0.0f, 0.0f));
+		}
 	}
+	else if (!test4)
+		test4 = true;
+
+	if (GetAsyncKeyState('5'))
+	{
+		if (test4)
+		{
+			_gameObjects[1]->GetTransform()->SetPosition(0.0f, 0.5f, -2.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+			_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 50.0f));
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-50.0f, 0.0f, 0.0f));
+		}
+	}
+	else if (!test4)
+		test4 = true;
 
 	Vector3 input = Vector3();
 	if (GetAsyncKeyState('W'))
@@ -778,17 +832,6 @@ void Application::Update()
 	_camera->SetPosition(cameraPos);
 	_camera->Update();
 
-	// Update objects
-	for (auto gameObject : _gameObjects)
-	{
-		if (gameObject->GetType().find("Cube") != std::string::npos)
-		{
-			//Debug::GetInstance().Write(deltaTime);
-			//Debug::GetInstance().WriteLine("");
-		}
-		gameObject->Update(deltaTime);
-	}
-
 	for (int i = 0; i < _colliders.size(); i++)
 	{
 		if (_colliders[i]->GetGameObject()->GetTransform()->GetPosition().y < 0.5f)
@@ -799,7 +842,7 @@ void Application::Update()
 		}
 		for (int j = i + 1; j < _colliders.size(); j++)
 		{
-			if (_colliders[i]->IntersectsVisit(_colliders[j]))
+			if (_colliders[i]->IntersectsVisit(_colliders[j], deltaTime))
 			{
 				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
 				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
@@ -823,6 +866,17 @@ void Application::Update()
 					rbJ->CollidedWith(_colliders[i]);
 			}
 		}
+	}
+
+	// Update objects
+	for (auto gameObject : _gameObjects)
+	{
+		if (gameObject->GetType().find("Cube") != std::string::npos)
+		{
+			//Debug::GetInstance().Write(deltaTime);
+			//Debug::GetInstance().WriteLine("");
+		}
+		gameObject->Update(deltaTime);
 	}
 
 	dwTimeStart = dwTimeCur;
