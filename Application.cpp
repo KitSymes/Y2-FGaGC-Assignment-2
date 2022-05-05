@@ -199,6 +199,9 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		}
 	}
 
+	// Create initial Octree
+	_octree = new Octree(Vector3());
+	_octree->Create(_colliders, 50.0f);
 	return S_OK;
 }
 
@@ -700,8 +703,12 @@ void Application::moveBackward(int objectNumber)
 	_gameObjects[objectNumber - 2]->GetTransform()->SetPosition(position);
 }
 
-bool doIt = true;
+bool test1 = true;
+bool test2 = true;
+bool test3 = true;
 bool test4 = true;
+bool test5 = true;
+bool test6 = true;
 void Application::Update()
 {
 	// Update our time
@@ -721,52 +728,76 @@ void Application::Update()
 	// Move gameobject
 	if (GetAsyncKeyState('1'))
 	{
-		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 10.0f);
-		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
-		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		if (test1)
+		{
+			test1 = false;
+
+			_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 10.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
+		}
 	}
+	else if (!test1)
+		test1 = true;
+
 	if (GetAsyncKeyState('2'))
 	{
-		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 5.0f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
-		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
-		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		if (test2)
+		{
+			test2 = false;
 
-		_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(50.0f, 0.0f, 0.0f));
+			_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 5.0f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
+
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(50.0f, 0.0f, 0.0f));
+		}
 	}
+	else if (!test2)
+		test2 = true;
 
 	if (GetAsyncKeyState('3'))
 	{
-		_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
-		_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
-		_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-		_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+		if (test3)
+		{
+			test3 = false;
 
-		_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(-0.5f, 0.0f, 0.5f));
-		_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.0f, 0.5f, 0.5f));
-		_gameObjects[3]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.5f, 0.0f, 0.5f));
+			_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(0.0f, 0.5f, 0.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
+
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(-0.5f, 0.0f, 0.5f));
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.0f, 0.5f, 0.5f));
+			_gameObjects[3]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 5.0f), Vector3(0.5f, 0.0f, 0.5f));
+		}
 	}
+	else if (!test3)
+		test3 = true;
 
 	if (GetAsyncKeyState('4'))
 	{
 		if (test4)
 		{
+			test4 = false;
+
 			_gameObjects[1]->GetTransform()->SetPosition(-2.0f, 0.5f, 0.0f);
 			_gameObjects[2]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
 			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
-			_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-			_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-			_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
 
-			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(50.0f, 0.0f, 0.0f));
-			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-50.0f, 0.0f, 0.0f));
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(100.0f, 0.0f, 0.0f));
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-100.0f, 0.0f, 0.0f));
 		}
 	}
 	else if (!test4)
@@ -774,21 +805,40 @@ void Application::Update()
 
 	if (GetAsyncKeyState('5'))
 	{
-		if (test4)
+		if (test5)
 		{
+			test5 = false;
+
 			_gameObjects[1]->GetTransform()->SetPosition(0.0f, 0.5f, -2.0f);
 			_gameObjects[2]->GetTransform()->SetPosition(2.0f, 0.5f, 0.0f);
 			_gameObjects[3]->GetTransform()->SetPosition(2.0f, 0.5f, 10.0f);
-			_gameObjects[1]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-			_gameObjects[2]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
-			_gameObjects[3]->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
 
-			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 50.0f));
-			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-50.0f, 0.0f, 0.0f));
+			_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 0.0f, 100.0f));
+			_gameObjects[2]->GetComponent<Rigidbody>()->AddForce(Vector3(-100.0f, 0.0f, 0.0f));
 		}
 	}
-	else if (!test4)
-		test4 = true;
+	else if (!test5)
+		test5 = true;
+
+	if (GetAsyncKeyState('6'))
+	{
+		if (test6)
+		{
+			test6 = false;
+
+			_gameObjects[1]->GetTransform()->SetPosition(15.0f, 0.5f, -2.0f);
+			_gameObjects[2]->GetTransform()->SetPosition(2.0f, 0.5f, 5.0f);
+			_gameObjects[3]->GetTransform()->SetPosition(15.0f, 0.5f, 10.0f);
+			_gameObjects[1]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[2]->GetComponent<Rigidbody>()->Reset();
+			_gameObjects[3]->GetComponent<Rigidbody>()->Reset();
+		}
+	}
+	else if (!test6)
+		test6 = true;
 
 	Vector3 input = Vector3();
 	if (GetAsyncKeyState('W'))
@@ -804,15 +854,8 @@ void Application::Update()
 		input.x += 1.0f;
 
 	if (GetAsyncKeyState('F'))
-	{
-		if (doIt)
-		{
-			doIt = false;
-			_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 0.2f, 0.0f), Vector3(0.5f, -1.0f, 0.0f));
-		}
-	}
-	else if (!doIt)
-		doIt = true;
+		_gameObjects[1]->GetComponent<Rigidbody>()->SetTorque(Vector3(0.0f, 0.2f, 0.0f), Vector3(0.5f, -1.0f, 0.0f));
+
 	if (GetAsyncKeyState('G'))
 		_gameObjects[1]->GetComponent<Rigidbody>()->AddForce(Vector3(0.0f, 100.0f, 0.0f));
 
@@ -832,52 +875,26 @@ void Application::Update()
 	_camera->SetPosition(cameraPos);
 	_camera->Update();
 
-	for (int i = 0; i < _colliders.size(); i++)
-	{
-		if (_colliders[i]->GetGameObject()->GetTransform()->GetPosition().y < 0.5f)
-		{
-			Vector3 temp = _colliders[i]->GetGameObject()->GetTransform()->GetPosition();
-			temp.y = 0.5f;
-			_colliders[i]->GetGameObject()->GetTransform()->SetPosition(temp);
-		}
-		for (int j = i + 1; j < _colliders.size(); j++)
-		{
-			if (_colliders[i]->IntersectsVisit(_colliders[j], deltaTime))
-			{
-				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetAcceleration(Vector3());
-				//_colliders[i]->GetGameObject()->GetComponent<Rigidbody>()->SetVelocity(Vector3());
-				Rigidbody* rbI = _colliders[i]->GetGameObject()->GetComponent<Rigidbody>();
-				Rigidbody* rbJ = _colliders[j]->GetGameObject()->GetComponent<Rigidbody>();
-
-				if (rbI != nullptr) // This one has a RB
-				{
-					if (rbJ != nullptr)
-					{
-						// Pick the object with the higher momentum to act on
-						if (rbI->GetVelocity().Magnitude() * rbI->GetMass() >= rbJ->GetVelocity().Magnitude() * rbJ->GetMass())
-							rbI->CollidedWith(_colliders[j]);
-						else
-							rbJ->CollidedWith(_colliders[i]);
-					}
-					else
-						rbI->CollidedWith(_colliders[j]);
-				}
-				else if (rbJ != nullptr) // Only the other one has an RB
-					rbJ->CollidedWith(_colliders[i]);
-			}
-		}
-	}
+	_octree->DetectCollisions(deltaTime, vector<Collider*>());
 
 	// Update objects
 	for (auto gameObject : _gameObjects)
 	{
-		if (gameObject->GetType().find("Cube") != std::string::npos)
+		if (gameObject->GetType().find("Cube 0") != std::string::npos)
 		{
-			//Debug::GetInstance().Write(deltaTime);
-			//Debug::GetInstance().WriteLine("");
+			//Debug::GetInstance().WriteLine(gameObject->GetComponent<Rigidbody>()->GetVelocity());
 		}
 		gameObject->Update(deltaTime);
 	}
+
+	// Create new Octree for next Update
+	if (_octree)
+	{
+		delete _octree;
+		_octree = nullptr;
+	}
+	_octree = new Octree(Vector3());
+	_octree->Create(_colliders, 50.0f);
 
 	dwTimeStart = dwTimeCur;
 	deltaTime -= FPS_60;

@@ -32,6 +32,7 @@
 #include "SphereCollider.h"
 #include "AABBCollider.h"
 #include "OBBCollider.h"
+#include "Octree.h"
 
 #define NUMBER_OF_CUBES 3
 #define FPS_60 1.0f/60.0f
@@ -117,6 +118,7 @@ private:
 
 	vector<GameObject*> _gameObjects;
 	vector<Collider*> _colliders;
+	Octree* _octree;
 
 	Camera * _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;

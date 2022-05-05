@@ -31,7 +31,6 @@ void Rigidbody::SetVelocity(Vector3 value)
 void Rigidbody::SetTorque(Vector3 force, Vector3 relativeLocation)
 {
 	_torque = relativeLocation.CrossProduct(force).ToXMFLOAT3();
-	CalculateAngularAcceleration();
 }
 
 void Rigidbody::SetInertiaTensor(float dx, float dy, float dz)
@@ -50,15 +49,20 @@ void Rigidbody::SetMass(float mass)
 	_mass = mass;
 }
 
-void Rigidbody::CalculateAngularAcceleration()
+void Rigidbody::CalculateAngularAcceleration(float deltaTime)
 {
+	if (_torque.x == 0 && _torque.y == 0 && _torque.z == 0)
+		return;
 	XMMATRIX inverse = XMMatrixInverse(nullptr, XMLoadFloat3x3(&_inertiaTensor));
 	XMStoreFloat3(&_angularAcceleration, XMVector3Transform(XMLoadFloat3(&_torque), inverse));
-	_angularVelocity = Vector3(_angularAcceleration.x, _angularAcceleration.y, _angularAcceleration.z);
+	_angularVelocity += Vector3(_angularAcceleration.x, _angularAcceleration.y, _angularAcceleration.z) * deltaTime;
+	_torque = XMFLOAT3();
 }
 
 void Rigidbody::Update(float t)
 {
+	CalculateAngularAcceleration(t);
+
 	// calculate net external force
 	UpdateNetForce(t);
 
@@ -70,9 +74,9 @@ void Rigidbody::Update(float t)
 	// update world position and velocity of object
 	// update world position of object by adding displacement to previously calculated position  
 	_gameObject->GetTransform()->SetPosition(
-		_gameObject->GetTransform()->GetPosition().x + _velocity.x * t + 0.5 * _acceleration.x * t * t,
-		_gameObject->GetTransform()->GetPosition().y + _velocity.y * t + 0.5 * _acceleration.y * t * t,
-		_gameObject->GetTransform()->GetPosition().z + _velocity.z * t + 0.5 * _acceleration.z * t * t);
+		_gameObject->GetTransform()->GetPosition().x + _velocity.x * t + 0.5f * _acceleration.x * t * t,
+		_gameObject->GetTransform()->GetPosition().y + _velocity.y * t + 0.5f * _acceleration.y * t * t,
+		_gameObject->GetTransform()->GetPosition().z + _velocity.z * t + 0.5f * _acceleration.z * t * t);
 
 	// update velocity of object by adding change relative to previously calculated velocity
 	_velocity.x = _velocity.x + _acceleration.x * t;
@@ -88,7 +92,7 @@ void Rigidbody::Update(float t)
 	_netForce = Vector3();
 }
 
-void Rigidbody::UpdateNetForce(float t)
+void Rigidbody::UpdateNetForce(float deltaTime)
 {
 	// Calculate Velocity Magnitude
 	float velMag = _velocity.Magnitude();
@@ -97,8 +101,11 @@ void Rigidbody::UpdateNetForce(float t)
 	unitVel.Normalise();
 
 	_netForce += thrust;
-	_netForce += _brake;
-	_netForce -= min(_mass * _gravity * _frictionCoefficient, _velocity.Magnitude()) * unitVel; // Friction
+
+	if (_gameObject->GetTransform()->GetPosition().y > 0.5f)
+		_netForce -= Vector3(0.0f, _mass * _gravity, 0.0f); // Gravity
+
+	_netForce -= min(_mass * _gravity * _frictionCoefficient, velMag) * unitVel; // Friction
 
 	Vector3 drag;
 	if (_laminar)
@@ -121,8 +128,25 @@ void Rigidbody::UpdateNetForce(float t)
 	}
 	_netForce -= drag;
 
-	if (_gameObject->GetTransform()->GetPosition().y > 0.5f)
-		_netForce -= Vector3(0.0f, _mass * _gravity, 0.0f); // Gravity
+	float a = _gameObject->GetTransform()->GetPosition().y + _velocity.y * deltaTime;
+	float b = 0.5f * (_netForce.y / _mass) * deltaTime * deltaTime;
+	if (a + b < 0.5f)
+	{
+		_netForce.y = 0.0f;
+		_velocity.y = 0.0f;
+
+		Vector3 temp = _gameObject->GetTransform()->GetPosition();
+		temp.y = 0.5f;
+		_gameObject->GetTransform()->SetPosition(temp);
+
+		//_netForce.y = ((0.5f - a) / (0.5f * deltaTime * deltaTime)) * _mass;
+
+		//_netForce.y = ((0.5f - _gameObject->GetTransform()->GetPosition().y) / (0.5f * deltaTime * deltaTime)) * _mass;
+		//_velocity.y = 0.0f;
+
+		//_netForce.y = _velocity.y * -2.0f * _mass / deltaTime;
+		//_netForce.y -= (_gameObject->GetTransform()->GetPosition().y - 0.5f) * _mass / deltaTime;
+	}
 }
 
 void Rigidbody::UpdateAcceleration()
@@ -197,4 +221,13 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 		}*/
 	}
 
+}
+
+void Rigidbody::Reset()
+{
+	_gameObject->GetTransform()->SetRotationDegrees(0.0f, 0.0f, 0.0f);
+	_angularAcceleration = Vector3().ToXMFLOAT3();
+	_angularVelocity = Vector3();
+	SetVelocity(Vector3());
+	SetAcceleration(Vector3());
 }

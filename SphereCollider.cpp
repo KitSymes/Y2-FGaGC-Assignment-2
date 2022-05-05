@@ -20,6 +20,23 @@ float SphereCollider::Centre(int axis)
 		return MININT;
 }
 
+// https://stackoverflow.com/questions/47481774/getting-point-on-line-segment-that-is-closest-to-another-point
+bool SphereCollider::IntersectsLine(Vector3 start, Vector3 end)
+{
+	// Closest point on the line to position (includes past start and end point), but that shouldn't matter
+	Vector3 AB = end - start;
+	Vector3 AP = _gameObject->GetTransform()->GetPosition() - start;
+	float lengthSqrAB = AB.x * AB.x + AB.y * AB.y;
+	float t = (AP.x * AB.x + AP.y * AB.y) / lengthSqrAB;
+	if (t < 0)
+		t = 0;
+	if (t > 1)
+		t = 1;
+	Vector3 closest = start + t * AB;
+
+	return (closest - _gameObject->GetTransform()->GetPosition()).Magnitude() <= _radius;
+}
+
 bool SphereCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
 	return other->Intersects(this, deltaTime);

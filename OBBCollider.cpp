@@ -33,6 +33,79 @@ float OBBCollider::Max(int axis)
 		return MAXINT;
 }
 
+bool OBBCollider::IntersectsLine(Vector3 start, Vector3 end)
+{
+	Vector3 direction = end - start;
+	vector<Vector3> directionVerticies;
+	directionVerticies.push_back(start);
+	directionVerticies.push_back(end);
+
+	// Seperating Axis Theorem
+	Quaternion selfRotation = _gameObject->GetTransform()->GetRotation();
+
+	vector<Vector3> selfVerticies;
+	selfVerticies.push_back(selfRotation * _min + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _min.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * _max + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_min.x, _max.y, _max.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _min.y, _max.x) + _gameObject->GetTransform()->GetPosition());
+	selfVerticies.push_back(selfRotation * Vector3(_max.x, _max.y, _min.x) + _gameObject->GetTransform()->GetPosition());
+	float selfMinBound, selfMaxBound, otherMinBound, otherMaxBound;
+
+	// Check own face normals - Right, Up, Front
+	Vector3 selfR = selfRotation * Vector3(1.0f, 0.0f, 0.0f);
+	Vector3 selfU = selfRotation * Vector3(0.0f, 1.0f, 0.0f);
+	Vector3 selfF = selfRotation * Vector3(0.0f, 0.0f, 1.0f);
+	// Pairs checks
+	// selfR X other<>
+	Vector3 sRxoR = selfR.CrossProduct(direction);
+
+	SeparatingAxisTest(sRxoR, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sRxoR, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	Vector3 sRxoU = selfR.CrossProduct(direction);
+
+	SeparatingAxisTest(sRxoU, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sRxoU, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	Vector3 sRxoF = selfR.CrossProduct(direction);
+
+	SeparatingAxisTest(sRxoF, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sRxoF, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	// selfU X other<>
+	Vector3 sRxo = selfR.CrossProduct(direction);
+
+	SeparatingAxisTest(sRxo, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sRxo, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	Vector3 sUxoU = selfU.CrossProduct(direction);
+
+	SeparatingAxisTest(sUxoU, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sUxoU, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	Vector3 sFxo = selfF.CrossProduct(direction);
+
+	SeparatingAxisTest(sFxo, selfVerticies, selfMinBound, selfMaxBound);
+	SeparatingAxisTest(sFxo, directionVerticies, otherMinBound, otherMaxBound);
+	if (!Overlaps(selfMinBound, selfMaxBound, otherMinBound, otherMaxBound))
+		return false;
+
+	return true;
+}
+
 bool OBBCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
 	return other->Intersects(this, deltaTime);

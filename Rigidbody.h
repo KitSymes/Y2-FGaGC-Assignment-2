@@ -24,8 +24,6 @@ private:
     XMFLOAT3 _angularAcceleration;
     Vector3 _angularVelocity;
 
-    Vector3 _brake;
-
     const float _dragCoeficient = 1.05f;
     const float _angularDamping = 0.20f;
     const float _gravity = 9.81f;
@@ -47,15 +45,17 @@ public:
     void SetInertiaTensor(float dx, float dy, float dz);
     void SetMass(float mass);
 
-    void CalculateAngularAcceleration();
+    void CalculateAngularAcceleration(float deltaTime);
 
     void Update(float t);
-    void UpdateNetForce(float t);
+    void UpdateNetForce(float deltaTime);
     void UpdateAcceleration();
 
     void AddForce(Vector3 force);
     void AddForce(Vector3 force, Vector3 relativeLocation);
     void CollidedWith(Collider* otherCollider);
+
+    void Reset();
 
     Vector3 thrust;
 };

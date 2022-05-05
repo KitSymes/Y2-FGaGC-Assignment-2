@@ -15,6 +15,8 @@ public:
 	float GetRadius() { return _radius; };
 	float Centre(int axis);
 
+	bool IntersectsLine(Vector3 start, Vector3 end) override;
+
 	bool IntersectsVisit(Collider* other, float deltaTime) override;
 	bool Intersects(SphereCollider* other, float deltaTime) override;
 	bool Intersects(AABBCollider* other, float deltaTime) override;

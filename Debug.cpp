@@ -37,14 +37,31 @@ void Debug::Write(long num)
 	OutputDebugStringA(str);
 }
 
+void Debug::Write(Vector3 vector)
+{
+	Write("(");
+	Write(vector.x);
+	Write(", ");
+	Write(vector.y);
+	Write(", ");
+	Write(vector.z);
+	Write(")");
+}
+
 void Debug::WriteLine(char* str)
 {
-	OutputDebugStringA(str);
+	Write(str);
 	OutputDebugStringA("\n");
 }
 
 void Debug::WriteLine(const char* str)
 {
-	OutputDebugStringA(str);
+	Write(str);
+	OutputDebugStringA("\n");
+}
+
+void Debug::WriteLine(Vector3 vector)
+{
+	Write(vector);
 	OutputDebugStringA("\n");
 }

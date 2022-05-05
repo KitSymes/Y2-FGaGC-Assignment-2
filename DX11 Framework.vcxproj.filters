@@ -46,6 +46,7 @@
     <ClInclude Include="OBBCollider.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="Octree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -73,6 +74,7 @@
     <ClCompile Include="OBBCollider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Octree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

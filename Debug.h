@@ -5,6 +5,7 @@
 
 #include <string>
 #include <Windows.h>
+#include "Vector3.h"
 
 class Debug
 {
@@ -16,8 +17,10 @@ public:
 	void Write(int num);
 	void Write(float num);
 	void Write(long num);
+	void Write(Vector3 vector);
 
 	void WriteLine(char* str);
 	void WriteLine(const char* str);
+	void WriteLine(Vector3 vector);
 };
 #endif

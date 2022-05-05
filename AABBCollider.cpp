@@ -33,6 +33,34 @@ float AABBCollider::Max(int axis)
 		return MAXINT;
 }
 
+bool AABBCollider::IntersectsLine(Vector3 start, Vector3 end)
+{
+	if ((Min(0) <= start.x && Max(0) >= start.x) &&
+		(Min(1)<= start.y && Max(1) >= start.y) &&
+		(Min(2)<= start.z && Max(2) >= start.z))
+		return true;
+
+	if ((Min(0) <= end.x && Max(0) >= end.x) &&
+		(Min(1) <= end.y && Max(1) >= end.y) &&
+		(Min(2) <= end.z && Max(2) >= end.z))
+		return true;
+
+	// Closest point on the line to position (includes past start and end point), but that shouldn't matter
+	Vector3 AB = end - start;
+	Vector3 AP = _gameObject->GetTransform()->GetPosition() - start;
+	float lengthSqrAB = AB.x * AB.x + AB.y * AB.y;
+	float t = (AP.x * AB.x + AP.y * AB.y) / lengthSqrAB;
+	if (t < 0)
+		t = 0;
+	if (t > 1)
+		t = 1;
+	Vector3 closest = start + t * AB;
+
+	return ((Min(0) <= closest.x && Max(0) >= closest.x) &&
+		(Min(1) <= closest.y && Max(1) >= closest.y) &&
+		(Min(2) <= closest.z && Max(2) >= closest.z));
+}
+
 bool AABBCollider::IntersectsVisit(Collider* other, float deltaTime)
 {
 	return other->Intersects(this, deltaTime);
