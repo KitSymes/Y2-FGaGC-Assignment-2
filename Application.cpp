@@ -161,6 +161,7 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
+	//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f * 15, -0.01f, -0.5f * 15), Vector3(0.5f * 15, 0.01f, 0.5f * 15)));
 
 	_gameObjects.push_back(gameObject);
 
@@ -882,7 +883,7 @@ void Application::Update()
 	{
 		if (gameObject->GetType().find("Cube 0") != std::string::npos)
 		{
-			//Debug::GetInstance().WriteLine(gameObject->GetComponent<Rigidbody>()->GetVelocity());
+			Debug::GetInstance().WriteLine(gameObject->GetComponent<Rigidbody>()->GetVelocity());
 		}
 		gameObject->Update(deltaTime);
 	}

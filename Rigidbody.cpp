@@ -203,8 +203,8 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 			Vector3 V1fminusV2f = -elasticity * (_velocity - otherRB->_velocity);
 			Vector3 V1fplusV2f = _velocity + otherRB->_velocity; // Both should be multiplied by their mass,
 			// but this causes issues as lecture notes just say assuming they have the same mass
-			Vector3 v1f = (V1fplusV2f - V1fminusV2f) / 2.0f;
-			Vector3 v2f = (V1fplusV2f + V1fminusV2f) / 2.0f;
+			Vector3 v1f = (V1fplusV2f + V1fminusV2f) / 2.0f;
+			Vector3 v2f = (V1fplusV2f - V1fminusV2f) / 2.0f;
 
 			_velocity = v1f;
 			otherRB->_velocity = v2f;
