@@ -22,12 +22,12 @@ GameObject::~GameObject()
 	components.clear();
 }
 
-void GameObject::Update(float t)
+void GameObject::Update(float deltaTime)
 {
-	_transform->Update(t);
+	_transform->Update(deltaTime);
 
 	for (int i = 0; i < components.size(); i++)
-		components[i]->Update(t);
+		components[i]->Update(deltaTime);
 
 	//if (_parent != nullptr)
 		//XMStoreFloat4x4(&_transform->GetWorld(), _transform->GetWorldMatrix() * _parent->_transform->GetWorldMatrix());

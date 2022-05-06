@@ -25,7 +25,7 @@ void Octree::Create(vector<Collider*> colliders, float sideLength)
 {
 	// This is a leaf because it only has 1 object
 	// OR This is a leaf because the size length is <= 1
-	if (colliders.size() == 1 || sideLength <= 1.0f)
+	if (colliders.size() == 1 || sideLength / 2.0f <= 2.0f)
 	{
 		for (Collider* go : colliders)
 			_leafObjects.push_back(go);

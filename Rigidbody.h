@@ -32,6 +32,7 @@ private:
     const float _fluidDensityAir = 1.225;
 
     bool _laminar = true;
+    bool _useGravity = true;
 public:
     Rigidbody(bool useConstAccel, Vector3 initialVelocity, Vector3 initialAcceleration);
 
@@ -44,10 +45,11 @@ public:
     void SetTorque(Vector3 force, Vector3 relativeLocation);
     void SetInertiaTensor(float dx, float dy, float dz);
     void SetMass(float mass);
+    void SetGravity(bool gravity);
 
     void CalculateAngularAcceleration(float deltaTime);
 
-    void Update(float t);
+    void Update(float deltaTime);
     void UpdateNetForce(float deltaTime);
     void UpdateAcceleration();
 

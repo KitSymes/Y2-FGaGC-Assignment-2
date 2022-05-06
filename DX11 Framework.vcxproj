@@ -382,6 +382,8 @@
     <ClCompile Include="OBBCollider.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -406,6 +408,8 @@
     <ClInclude Include="OBBCollider.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Octree.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Quaternion.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Rigidbody.h" />

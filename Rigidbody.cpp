@@ -49,6 +49,11 @@ void Rigidbody::SetMass(float mass)
 	_mass = mass;
 }
 
+void Rigidbody::SetGravity(bool gravity)
+{
+	_useGravity = gravity;
+}
+
 void Rigidbody::CalculateAngularAcceleration(float deltaTime)
 {
 	if (_torque.x == 0 && _torque.y == 0 && _torque.z == 0)
@@ -59,12 +64,12 @@ void Rigidbody::CalculateAngularAcceleration(float deltaTime)
 	_torque = XMFLOAT3();
 }
 
-void Rigidbody::Update(float t)
+void Rigidbody::Update(float deltaTime)
 {
-	CalculateAngularAcceleration(t);
+	CalculateAngularAcceleration(deltaTime);
 
 	// calculate net external force
-	UpdateNetForce(t);
+	UpdateNetForce(deltaTime);
 
 	// update acceleration of object using Newton’s second law of motion  
 	// Assumption: net external force is constant between consecutive updates of object state
@@ -74,18 +79,18 @@ void Rigidbody::Update(float t)
 	// update world position and velocity of object
 	// update world position of object by adding displacement to previously calculated position  
 	_gameObject->GetTransform()->SetPosition(
-		_gameObject->GetTransform()->GetPosition().x + _velocity.x * t + 0.5f * _acceleration.x * t * t,
-		_gameObject->GetTransform()->GetPosition().y + _velocity.y * t + 0.5f * _acceleration.y * t * t,
-		_gameObject->GetTransform()->GetPosition().z + _velocity.z * t + 0.5f * _acceleration.z * t * t);
-
+		_gameObject->GetTransform()->GetPosition().x + _velocity.x * deltaTime + 0.5f * _acceleration.x * deltaTime * deltaTime,
+		_gameObject->GetTransform()->GetPosition().y + _velocity.y * deltaTime + 0.5f * _acceleration.y * deltaTime * deltaTime,
+		_gameObject->GetTransform()->GetPosition().z + _velocity.z * deltaTime + 0.5f * _acceleration.z * deltaTime * deltaTime);
+	Vector3 pos = _gameObject->GetTransform()->GetPosition();
 	// update velocity of object by adding change relative to previously calculated velocity
-	_velocity.x = _velocity.x + _acceleration.x * t;
-	_velocity.y = _velocity.y + _acceleration.y * t;
-	_velocity.z = _velocity.z + _acceleration.z * t;
+	_velocity.x = _velocity.x + _acceleration.x * deltaTime;
+	_velocity.y = _velocity.y + _acceleration.y * deltaTime;
+	_velocity.z = _velocity.z + _acceleration.z * deltaTime;
 
-	_angularVelocity *= pow(_angularDamping, t);
+	_angularVelocity *= pow(_angularDamping, deltaTime);
 	Quaternion rot = _gameObject->GetTransform()->GetRotation();
-	rot.addScaledVector(_angularVelocity, t);
+	rot.addScaledVector(_angularVelocity, deltaTime);
 	rot.normalise();
 	_gameObject->GetTransform()->SetRotation(rot);
 
@@ -102,10 +107,11 @@ void Rigidbody::UpdateNetForce(float deltaTime)
 
 	_netForce += thrust;
 
-	if (_gameObject->GetTransform()->GetPosition().y > 0.5f)
+	if (_useGravity && _gameObject->GetTransform()->GetPosition().y > 0.5f)
 		_netForce -= Vector3(0.0f, _mass * _gravity, 0.0f); // Gravity
 
-	_netForce -= min(_mass * _gravity * _frictionCoefficient, velMag) * unitVel; // Friction
+	if (velMag != 0.0f)
+		_netForce -= min(_mass * _gravity * _frictionCoefficient, velMag) * unitVel; // Friction
 
 	Vector3 drag;
 	if (_laminar)
@@ -113,17 +119,15 @@ void Rigidbody::UpdateNetForce(float deltaTime)
 		// Calculate Drag
 		float dragMag = 0.5f * _fluidDensityAir * _dragCoeficient * _referenceArea * velMag;
 
-		drag = Vector3(dragMag * _velocity.x, dragMag * _velocity.y, dragMag * _velocity.z);
+		drag = dragMag * _velocity;
 	}
-	else // Turbulent
+	else if (velMag != 0.0f) // Turbulent
 	{
 		// Drag Force Magnitude
 		float dragMag = 0.5f * _fluidDensityAir * _dragCoeficient * _referenceArea * velMag * velMag;
 
 		// Calculate Drag
-		drag = Vector3(dragMag * unitVel.x,
-			dragMag * unitVel.y,
-			dragMag * unitVel.z);
+		drag = dragMag * unitVel;
 
 	}
 	_netForce -= drag;

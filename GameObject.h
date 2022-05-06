@@ -29,7 +29,7 @@ public:
 	Transform* GetTransform() const { return _transform; }
 	Appearance* GetAppearance() const { return _appearance; }
 
-	void Update(float t);
+	void Update(float deltaTime);
 	void Draw(ID3D11DeviceContext* pImmediateContext);
 
 	void AddComponent(Component* component);

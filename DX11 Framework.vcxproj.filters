@@ -15,6 +15,9 @@
     <Filter Include="Components">
       <UniqueIdentifier>{0ce847c8-4310-4757-bfae-7cec203ab785}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Particle System">
+      <UniqueIdentifier>{d8c7d811-b123-4a1e-9b37-5b345b57348e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -47,6 +50,12 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Octree.h" />
+    <ClInclude Include="Particle.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Particle System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -75,6 +84,12 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="Particle.cpp">
+      <Filter>Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Particle System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

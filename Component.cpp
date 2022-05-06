@@ -6,7 +6,7 @@ void Component::SetParent(GameObject* gameObject)
 	_gameObject = gameObject;
 }
 
-void Component::Update(float t)
+void Component::Update(float deltaTime)
 {
 }
 
