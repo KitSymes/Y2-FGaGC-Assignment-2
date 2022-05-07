@@ -203,6 +203,20 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	// Create initial Octree
 	_octree = new Octree(Vector3());
 	_octree->Create(_colliders, 50.0f);
+
+	srand(time(NULL));
+
+	_particleManager = new ParticleManager();
+
+	_rainSystem = _particleManager->CreateSystem(new RainParticleSystem(cubeGeometry, shinyMaterial,
+		Vector3(-10.0f, 8.0f, -10.0f), Vector3(10.0f, 8.0f, 10.0f)));
+	_particleManager->GetSystem<RainParticleSystem>(_rainSystem)->Start();
+	_particleManager->GetSystem<RainParticleSystem>(_rainSystem)->SetWindDirection(Vector3(5.0f, 0.0f, 0.0f));
+
+	_smokeSystem = _particleManager->CreateSystem(new SmokeParticleSystem(cubeGeometry, shinyMaterial,
+		Vector3(-0.4f, 0.4f, -0.4f), Vector3(0.4f, 0.4f, 0.4f)));
+	_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->Start();
+	_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->SetWindDirection(Vector3(0.0f, 0.0f, 0.0f));
 	return S_OK;
 }
 
@@ -688,6 +702,19 @@ void Application::Cleanup()
 			gameObject = nullptr;
 		}
 	}
+
+	if (_octree != nullptr)
+	{
+		delete _octree;
+		_octree = nullptr;
+	}
+
+	if (_particleManager != nullptr)
+	{
+		delete _particleManager;
+		_particleManager = nullptr;
+	}
+
 }
 
 void Application::moveForward(int objectNumber)
@@ -709,7 +736,12 @@ bool test2 = true;
 bool test3 = true;
 bool test4 = true;
 bool test5 = true;
+// Octree Test
 bool test6 = true;
+// Toggle Rain
+bool test7 = true;
+// Toggle Smoke
+bool test8 = true;
 void Application::Update()
 {
 	// Update our time
@@ -841,6 +873,36 @@ void Application::Update()
 	else if (!test6)
 		test6 = true;
 
+	if (GetAsyncKeyState('7'))
+	{
+		if (test7)
+		{
+			test7 = false;
+
+			if (_particleManager->GetSystem<RainParticleSystem>(_rainSystem)->IsEnabled())
+				_particleManager->GetSystem<RainParticleSystem>(_rainSystem)->Stop();
+			else
+				_particleManager->GetSystem<RainParticleSystem>(_rainSystem)->Start();
+		}
+	}
+	else if (!test7)
+		test7 = true;
+
+	if (GetAsyncKeyState('8'))
+	{
+		if (test8)
+		{
+			test8 = false;
+
+			if (_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->IsEnabled())
+				_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->Stop();
+			else
+				_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->Start();
+		}
+	}
+	else if (!test8)
+		test8 = true;
+
 	Vector3 input = Vector3();
 	if (GetAsyncKeyState('W'))
 		input.z += 1.0f;
@@ -881,11 +943,13 @@ void Application::Update()
 	// Update objects
 	for (auto gameObject : _gameObjects)
 	{
+		gameObject->Update(deltaTime);
+
 		if (gameObject->GetType().find("Cube 0") != std::string::npos)
 		{
-			Debug::GetInstance().WriteLine(gameObject->GetComponent<Rigidbody>()->GetVelocity());
+			//Debug::GetInstance().WriteLine(gameObject->GetComponent<Rigidbody>()->GetVelocity());
+			_particleManager->GetSystem<SmokeParticleSystem>(_smokeSystem)->SetSpawnLocation(gameObject->GetTransform()->GetPosition());
 		}
-		gameObject->Update(deltaTime);
 	}
 
 	// Create new Octree for next Update
@@ -896,6 +960,8 @@ void Application::Update()
 	}
 	_octree = new Octree(Vector3());
 	_octree->Create(_colliders, 50.0f);
+
+	_particleManager->Update(deltaTime);
 
 	dwTimeStart = dwTimeCur;
 	deltaTime -= FPS_60;
@@ -970,6 +1036,8 @@ void Application::Draw()
 		// Draw object
 		gameObject->Draw(_pImmediateContext);
 	}
+
+	_particleManager->Draw(_pImmediateContext, &cb, _pConstantBuffer);
 
 	//
 	// Present our back buffer to our front buffer

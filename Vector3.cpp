@@ -116,6 +116,13 @@ void Vector3::Normalise()
 	z /= magnitude;
 }
 
+Vector3 Vector3::Normalised()
+{
+	Vector3 vec = Vector3(x, y, z);
+	vec.Normalise();
+	return vec;
+}
+
 DirectX::XMFLOAT3 Vector3::ToXMFLOAT3()
 {
 	return DirectX::XMFLOAT3(x, y, z);

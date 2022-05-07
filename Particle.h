@@ -10,21 +10,24 @@ class Particle
 {
 private:
 	GameObject* _gameObject;
-	Rigidbody* _rigidBody;
+	Rigidbody* _rigidbody;
 
 	float _life;
 	bool _active;
 public:
-	Particle(Geometry geometry, Material material, bool gravity);
+	Particle(Geometry geometry, Material material);
 	~Particle();
 
 	GameObject* GetGameObject();
 	Rigidbody* GetRigidbody();
 	bool IsActive();
 
-	void SetActive(bool active);
+	float GetLife();
 
-	void Update(float deltaTime);
+	void SetActive(bool active);
+	void SetLife(float life);
+
+	void Update(float deltaTime, Vector3 forces);
 	void Draw(ID3D11DeviceContext* pImmediateContext);
 };
 #endif

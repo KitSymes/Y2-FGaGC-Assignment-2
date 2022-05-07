@@ -12,6 +12,8 @@
 #include "OBJLoader.h"
 
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 /*
 //#include <SpriteFont.h>
 #include "CommonStates.h"
@@ -33,6 +35,9 @@
 #include "AABBCollider.h"
 #include "OBBCollider.h"
 #include "Octree.h"
+#include "ParticleManager.h"
+#include "RainParticleSystem.h"
+#include "SmokeParticleSystem.h"
 
 #define NUMBER_OF_CUBES 3
 #define FPS_60 1.0f/60.0f
@@ -119,6 +124,9 @@ private:
 	vector<GameObject*> _gameObjects;
 	vector<Collider*> _colliders;
 	Octree* _octree;
+	ParticleManager* _particleManager;
+	int _rainSystem;
+	int _smokeSystem;
 
 	Camera * _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;

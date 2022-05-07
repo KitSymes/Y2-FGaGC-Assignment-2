@@ -125,8 +125,7 @@ bool OBBCollider::Intersects(SphereCollider* other, float deltaTime)
 		max(_min.y, min(localSphereCenter.y, _max.y)),
 		max(_min.z, min(localSphereCenter.z, _max.z)));
 	Vector3 offset = closest - localSphereCenter;
-	Vector3 offsetNormalised = offset;
-	offsetNormalised.Normalise();
+	Vector3 offsetNormalised = offset.Normalised();
 	Vector3 translation = (other->GetRadius() - offset.Magnitude()) * offsetNormalised;
 
 	return (translation.x <= 0.0f && translation.y <= 0.0f && translation.z <= 0.0f);

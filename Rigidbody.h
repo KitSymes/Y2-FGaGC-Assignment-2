@@ -30,6 +30,7 @@ private:
     const float _frictionCoefficient = 0.5f;
     const float _referenceArea = 1.0f;
     const float _fluidDensityAir = 1.225;
+    float _gravityLimit = 0.5f;
 
     bool _laminar = true;
     bool _useGravity = true;
@@ -46,6 +47,7 @@ public:
     void SetInertiaTensor(float dx, float dy, float dz);
     void SetMass(float mass);
     void SetGravity(bool gravity);
+    void SetGravityLimit(float gravity);
 
     void CalculateAngularAcceleration(float deltaTime);
 

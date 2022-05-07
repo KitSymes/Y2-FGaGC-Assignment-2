@@ -54,6 +54,11 @@ void Rigidbody::SetGravity(bool gravity)
 	_useGravity = gravity;
 }
 
+void Rigidbody::SetGravityLimit(float gravity)
+{
+	_gravityLimit = gravity;
+}
+
 void Rigidbody::CalculateAngularAcceleration(float deltaTime)
 {
 	if (_torque.x == 0 && _torque.y == 0 && _torque.z == 0)
@@ -102,12 +107,11 @@ void Rigidbody::UpdateNetForce(float deltaTime)
 	// Calculate Velocity Magnitude
 	float velMag = _velocity.Magnitude();
 	// Calculate Normalised (Unit Vector) Velocity
-	Vector3 unitVel = _velocity;
-	unitVel.Normalise();
+	Vector3 unitVel = _velocity.Normalised();
 
 	_netForce += thrust;
 
-	if (_useGravity && _gameObject->GetTransform()->GetPosition().y > 0.5f)
+	if (_useGravity && _gameObject->GetTransform()->GetPosition().y > _gravityLimit)
 		_netForce -= Vector3(0.0f, _mass * _gravity, 0.0f); // Gravity
 
 	if (velMag != 0.0f)
@@ -134,13 +138,13 @@ void Rigidbody::UpdateNetForce(float deltaTime)
 
 	float a = _gameObject->GetTransform()->GetPosition().y + _velocity.y * deltaTime;
 	float b = 0.5f * (_netForce.y / _mass) * deltaTime * deltaTime;
-	if (a + b < 0.5f)
+	if (a + b < _gravityLimit)
 	{
 		_netForce.y = 0.0f;
 		_velocity.y = 0.0f;
 
 		Vector3 temp = _gameObject->GetTransform()->GetPosition();
-		temp.y = 0.5f;
+		temp.y = _gravityLimit;
 		_gameObject->GetTransform()->SetPosition(temp);
 
 		//_netForce.y = ((0.5f - a) / (0.5f * deltaTime * deltaTime)) * _mass;
@@ -180,8 +184,7 @@ void Rigidbody::CollidedWith(Collider* otherCollider)
 	if (otherRB == nullptr)
 	{
 		// Other object is unable to move
-		Vector3 normal = otherCollider->GetGameObject()->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition();
-		normal.Normalise();
+		Vector3 normal = (otherCollider->GetGameObject()->GetTransform()->GetPosition() - _gameObject->GetTransform()->GetPosition()).Normalised();
 		normal *= -1;
 		Vector3 result = _velocity - 2.0f * normal.DotProduct(_velocity) * normal;
 		_velocity = result;

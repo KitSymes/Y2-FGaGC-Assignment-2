@@ -31,6 +31,7 @@ public:
 
 	bool IsNormalised();
 	void Normalise();
+	Vector3 Normalised();
 
 	DirectX::XMFLOAT3 ToXMFLOAT3();
 };

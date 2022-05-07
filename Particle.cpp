@@ -1,12 +1,11 @@
 #include "Particle.h"
 
-Particle::Particle(Geometry geometry, Material material, bool gravity)
+Particle::Particle(Geometry geometry, Material material)
 {
 	_gameObject = new GameObject("Particle", geometry, material);
-	_gameObject->GetTransform()->SetScale(0.1f, 0.1f, 0.1f);
-	_rigidBody = new Rigidbody(false, Vector3(), Vector3());
-	_rigidBody->SetGravity(gravity);
-	_gameObject->AddComponent(_rigidBody);
+	_rigidbody = new Rigidbody(false, Vector3(), Vector3());
+	_rigidbody->SetGravity(false);
+	_gameObject->AddComponent(_rigidbody);
 
 	_active = false;
 	_life = 0.0f;
@@ -24,7 +23,7 @@ GameObject* Particle::GetGameObject()
 
 Rigidbody* Particle::GetRigidbody()
 {
-	return _rigidBody;
+	return _rigidbody;
 }
 
 bool Particle::IsActive()
@@ -32,12 +31,22 @@ bool Particle::IsActive()
 	return _active;
 }
 
+float Particle::GetLife()
+{
+	return _life;
+}
+
 void Particle::SetActive(bool active)
 {
 	_active = active;
 }
 
-void Particle::Update(float deltaTime)
+void Particle::SetLife(float life)
+{
+	_life = life;
+}
+
+void Particle::Update(float deltaTime, Vector3 forces)
 {
 	if (_active)
 	{
@@ -45,6 +54,7 @@ void Particle::Update(float deltaTime)
 			_active = false;
 		else
 		{
+			_rigidbody->AddForce(forces);
 			_gameObject->Update(deltaTime);
 			_life -= deltaTime;
 		}
