@@ -161,7 +161,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 	gameObject->GetTransform()->SetScale(15.0f, 15.0f, 15.0f);
 	gameObject->GetTransform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->GetAppearance()->SetTextureRV(_pGroundTextureRV);
-	//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f * 15, -0.01f, -0.5f * 15), Vector3(0.5f * 15, 0.01f, 0.5f * 15)));
 
 	_gameObjects.push_back(gameObject);
 
@@ -174,10 +173,6 @@ HRESULT Application::Initialise(HINSTANCE hInstance, int nCmdShow)
 		gameObject->GetAppearance()->SetTextureRV(_pTextureRV);
 		gameObject->AddComponent(new Rigidbody(false, Vector3(), Vector3()));
 		gameObject->AddComponent(new OBBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
-		//if (i == 0)
-		//else
-			//gameObject->AddComponent(new SphereCollider(0.5f));
-			//gameObject->AddComponent(new AABBCollider(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 		if (i == 0)
 			gameObject->GetComponent<Rigidbody>()->SetMass(2.0f);
 

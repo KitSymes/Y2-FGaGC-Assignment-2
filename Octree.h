@@ -6,8 +6,7 @@
 #include "GameObject.h"
 #include "Collider.h"
 #include "Rigidbody.h"
-// https://stackoverflow.com/questions/22156966/how-to-construct-an-octree-in-c
-// https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/introduction-to-octrees-r3529/
+
 class Octree
 {
 private:

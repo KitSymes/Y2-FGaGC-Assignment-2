@@ -26,6 +26,6 @@ void Transform::Update(float t)
 	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
 	XMMATRIX world = scale * rotation * translation;
 	if (_gameObject->GetParent() != nullptr)
-		world *= _gameObject->GetParent()->GetTransform()->GetWorldMatrix(); // TODO parent may not have been updated this frame
+		world *= _gameObject->GetParent()->GetTransform()->GetWorldMatrix();
 	XMStoreFloat4x4(&_world, world);
 }

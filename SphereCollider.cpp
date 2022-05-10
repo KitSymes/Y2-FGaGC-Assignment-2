@@ -20,7 +20,6 @@ float SphereCollider::Centre(int axis)
 		return MININT;
 }
 
-// https://stackoverflow.com/questions/47481774/getting-point-on-line-segment-that-is-closest-to-another-point
 bool SphereCollider::IntersectsLine(Vector3 start, Vector3 end)
 {
 	// Closest point on the line to position (includes past start and end point), but that shouldn't matter
